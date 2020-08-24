@@ -125,4 +125,4 @@ typedef struct
 // Clock Disable Macros for SPIx Peripherals
 #define SPI1_PCLK_DI() (RCC->APB2ENR &= ~(1 << 12))
 
-#endif /* INC_STM32F103X8_H_ */
+#endif /* INC_STM32F103C8_H_ */
