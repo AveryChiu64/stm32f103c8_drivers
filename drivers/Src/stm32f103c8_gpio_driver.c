@@ -54,13 +54,14 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	if (GpioAddress.pin > MAX_PIN_HIGH_REG) {
 		printf("Pin number out of range\n");
 	}
-	address->port->CRL = (settings->mode << (4 * address->pin));
 
-	if (settings.mode == INPUT_MODE) {
-
-	} else {
-
+	if(!settings->pupd) {
+		settings->pupd = 0;
 	}
+
+	address->port->CRL = (settings->mode << (4 * address->pin));
+	address->port->CRL = (settings->type << (4* address->pin)) + 2;
+	address->port->ODR = (settings->pupd << (address->pin));
 }
 void gpio_deinit(const GpioAddress *address);
 uint8_t gpio_read_pin(GpioAddress *address);
