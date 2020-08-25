@@ -17,10 +17,14 @@
 #define AHBPERIPH_BASE 0x40018000U
 
 // Base Addresses of peripherals hanging on APB1 bus
+#define SPI2_BASEADDR (APB1PERIPH_BASE + 0X3C00)
+#define SPI3_BASEADDR (APB1PERIPH_BASE + 0X3800)
+
 #define USART2_BASEADDR (APB1PERIPH_BASE + 0x4400)
 #define USART3_BASEADDR (APB1PERIPH_BASE + 0x4800)
 #define UART4_BASEADDR (APB1PERIPH_BASE + 0x4C00)
 #define UART5_BASEADDR (APB1PERIPH_BASE + 0x5000)
+
 #define I2C1_BASEADDR (APB1PERIPH_BASE + 0X5400)
 #define I2C2_BASEADDR (APB1PERIPH_BASE + 0X5800)
 
@@ -103,6 +107,8 @@ typedef struct {
 
 // Clock Enable Macros for SPIx Peripherals
 #define SPI1_PCLK_EN() (RCC->APB2ENR |= (1 << 12))
+#define SPI2_PCLK_EN() (RCC->APB1ENR |= (1 << 14))
+#define SPI3_PCLK_EN() (RCC->APB1ENR |= (1 << 15))
 
 // Clock Enable Macros for USARTx Peripherals
 #define USART1_PCLK_EN() (RCC->APB2ENR |= (1 << 14))
@@ -126,6 +132,15 @@ typedef struct {
 
 // Clock Disable Macros for SPIx Peripherals
 #define SPI1_PCLK_DI() (RCC->APB2ENR &= ~(1 << 12))
+#define SPI2_PCLK_DI() (RCC->APB1ENR &= ~(1 << 14))
+#define SPI3_PCLK_DI() (RCC->APB1ENR &= ~(1 << 15))
+
+// Clock Enable Macros for USARTx Peripherals
+#define USART1_PCLK_DI() (RCC->APB2ENR &= ~(1 << 14))
+#define USART2_PCLK_DI() (RCC->APB1ENR &= ~(1 << 17))
+#define USART3_PCLK_DI() (RCC->APB1ENR &= ~(1 << 18))
+#define USART4_PCLK_DI() (RCC->APB1ENR &= ~(1 << 19))
+#define USART5_PCLK_DI() (RCC->APB1ENR &= ~(1 << 20))
 
 // Generic Macros
 #define ENABLE 1
