@@ -4,12 +4,12 @@
 /*******************************************************************
  * NAME : gpio_peri_clock_ctrl
  *
- * DESCRIPTION : Enables or dsiables the peripheral clock
+ * DESCRIPTION : Enables or disables the peripheral clock
  *
  *PARAMETERS:	GpioRegDef 		*port			Address of GPIO Port
  * 			  	uint8_t		 	 en_or_di		ENABLE or DISABLE macros
  *
- * OUTPUTS : void
+ * OUTPUTS : 	void
  */
 void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
@@ -51,6 +51,16 @@ void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di) {
 	}
 }
 
+/*******************************************************************
+ * NAME : gpio_init
+ *
+ * DESCRIPTION : Initializes the GPIO settings
+ *
+ *PARAMETERS:	GpioAddress 	*address		Address of GPIO Port
+ * 			  	GpioSettings 	*settings 	 	GPIO settings
+ *
+ * OUTPUTS : 	void
+ */
 void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	if (address->pin > NUM_PINS) {
 		printf("Pin number out of range\n");
@@ -70,6 +80,15 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	address->port->ODR |= (settings->pupd << (address->pin));
 }
 
+/*******************************************************************
+ * NAME : gpio_deinit
+ *
+ * DESCRIPTION : Resets a port
+ *
+ * PARAMETERS:	GpioRegDef 		*port		The GPIO port
+ *
+ * OUTPUTS : 	void
+ */
 void gpio_deinit(GpioRegDef *port) {
 	if (port == GPIOA) {
 		GPIOA_REG_RESET();
@@ -89,27 +108,78 @@ void gpio_deinit(GpioRegDef *port) {
 		GPIOG_REG_RESET();
 	}
 }
+
+/*******************************************************************
+ * NAME : gpio_read_pin
+ *
+ * DESCRIPTION : Reads the value from a specific port and pin
+ *
+ * PARAMETERS:	GpioAddress 	*address		Address of GPIO Port
+ *
+ * OUTPUTS : 	GpioState						State of the GPIO pin
+ */
+
 GpioState gpio_read_pin(GpioAddress *address) {
 	// We shift the bit we want to the LSB and mask the other bits
-	return (GpioState)((address->port->IDR >> address->pin) & 0x00000001);
+	return (GpioState) ((address->port->IDR >> address->pin) & 0x00000001);
 }
 
+/*******************************************************************
+ * NAME : gpio_read_port
+ *
+ * DESCRIPTION : Reads the register for the port
+ *
+ * PARAMETERS:	GpioRegDef 		*port			The GPIO port
+ *
+ * OUTPUTS : 	uint16_t						The values in the register
+ */
 uint16_t gpio_read_port(GpioRegDef *port) {
-	return (uint16_t)(port->IDR);
+	return (uint16_t) (port->IDR);
 }
+
+/*******************************************************************
+ * NAME : gpio_write_pin
+ *
+ * DESCRIPTION : Writes a value to a pin
+ *
+ * PARAMETERS:	GpioAddress 	*address		Address of GPIO Port
+ * 				GpioState 		state			State of the GPIO pin
+ *
+ * OUTPUTS : 	void
+ */
 
 void gpio_write_pin(GpioAddress *address, GpioState state) {
-	if(state == GPIO_STATE_HIGH) {
+	if (state == GPIO_STATE_HIGH) {
 		address->port->ODR |= (1 << address->pin);
-	}
-	else {
+	} else {
 		address->port->ODR &= ~(1 << address->pin);
 	}
 }
 
+/*******************************************************************
+ * NAME : gpio_write_port
+ *
+ * DESCRIPTION : Writes a value to the whole register for the port
+ *
+ * PARAMETERS:	GpioRegDef 		*port			Address of GPIO Port
+ * 				uint16_t 		 value			Value to write to the register
+ *
+ * OUTPUTS : 	void
+ */
+
 void gpio_write_port(GpioRegDef *port, uint16_t value) {
-	port-> ODR = value;
+	port->ODR = value;
 }
+
+/*******************************************************************
+ * NAME : gpio_toggle_pin
+ *
+ * DESCRIPTION : Toggles an output pin's state
+ *
+ * PARAMETERS:	GpioAddress 	*address		Address of GPIO Port
+ *
+ * OUTPUTS : 	void
+ */
 
 void gpio_toggle_pin(GpioAddress *address) {
 	address->port->ODR ^= (1 << address->pin);
