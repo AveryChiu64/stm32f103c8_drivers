@@ -9,16 +9,18 @@ typedef struct {
 } GpioAddress;
 
 typedef enum {
-	ANALOG = 0, FLOATING, PUPD,
-} GpioInputType;
-
-typedef enum {
 	GPIO_STATE_LOW = 0, GPIO_STATE_HIGH,
 } GpioState;
 
 typedef enum {
-	PUSH_PULL = 0, OPEN_DRAIN, ALTFN_PUSH_PULL, ALTFN_OPEN_DRAIN,
-} GpioOutputType;
+	ANALOG_INPUT = 0,
+	FLOATING_INPUT,
+	PUPD_INPUT,
+	PUSH_PULL_OUTPUT = 0,
+	OPEN_DRAIN_OUTPUT,
+	ALTFN_PUSH_PULL_OUTPUT,
+	ALTFN_OPEN_DRAIN_OUTPUT,
+} GpioType;
 
 typedef enum {
 	INPUT_MODE = 0, OUTPUT_MODE_10MHZ, OUTPUT_MODE_2MHZ, OUTPUT_MODE_50MHZ,
@@ -30,8 +32,7 @@ typedef enum {
 
 typedef struct {
 	GpioMode mode;
-	GpioInputType input_type; // Can be left NULL if this pin is used for output
-	GpioOutputType output_type; // Can be left NULL if this pin is used for input
+	GpioType type;
 	GpioRes pupd;
 } GpioSettings;
 
@@ -39,7 +40,7 @@ typedef struct {
 void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di);
 
 //Initialization
-void gpio_init(GpioAddress *address, GpioSettings);
+void gpio_init(GpioAddress *address, GpioSettings *settings);
 void gpio_deinit(GpioAddress *address);
 
 //Read and Write

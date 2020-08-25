@@ -50,9 +50,19 @@ void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di) {
 	}
 }
 
-void gpio_init(GpioAddress *address, GpioSettings);
-void gpio_deinit(GpioAddress *address);
+void gpio_init(GpioAddress *address, GpioSettings *settings) {
+	if (GpioAddress.pin > MAX_PIN_HIGH_REG) {
+		printf("Pin number out of range\n");
+	}
+	address->port->CRL = (settings->mode << (4 * address->pin));
 
+	if (settings.mode == INPUT_MODE) {
+
+	} else {
+
+	}
+}
+void gpio_deinit(const GpioAddress *address);
 uint8_t gpio_read_pin(GpioAddress *address);
 uint16_t gpio_read_port(GpioRegDef *port);
 void gpio_write_pin(GpioAddress *address, GpioState state);
@@ -62,4 +72,4 @@ void gpio_toggle_pin(GpioAddress *address);
 // IRQ Configuration and ISR Handling
 void gpio_irq_config(uint8_t irq_numbeer, uint8_t irq_priority,
 		uint8_t en_or_di);
-void gpio_irq_handling(GpioAddress *address);
+void gpio_irq_handling(GpioAddress address);
