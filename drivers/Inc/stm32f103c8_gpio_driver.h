@@ -3,39 +3,55 @@
 
 #include "stm32f103c8.h"
 
-typedef struct
-{
-	uint8_t GPIO_PinNumber;
-	uint8_t GPIO_PinMode;
-	uint8_t GPIO_PinSpeed;
-	uint8_t GPIO_PinPuPdControl;
-	uint8_t GPIO_PinOPType;
-	uint8_t GPIO_PinAltFunMode;
-}GPIO_PinConfig_t;
+typedef struct {
+	GpioRegDef *port;
+	uint8_t pin;
+} GpioAddress;
 
-typedef struct
-{
-	// Pointer to hold base address of the GPIO Peripheral
-	GPIO_RegDef_t *pGPIOx;
-	GPIO_PinConfig_t GPIO_PinConfig;
-}GPIO_Handle_t;
+typedef enum {
+	ANALOG = 0, FLOATING, PUPD,
+} GpioInputType;
+
+typedef enum {
+	GPIO_STATE_LOW = 0, GPIO_STATE_HIGH,
+} GpioState;
+
+typedef enum {
+	PUSH_PULL = 0, OPEN_DRAIN, ALTFN_PUSH_PULL, ALTFN_OPEN_DRAIN,
+} GpioOutputType;
+
+typedef enum {
+	INPUT_MODE = 0, OUTPUT_MODE_10MHZ, OUTPUT_MODE_2MHZ, OUTPUT_MODE_50MHZ,
+} GpioMode;
+
+typedef enum {
+	INPUT_PULL_DOWN = 0, INPUT_PULL_UP
+} GpioRes;
+
+typedef struct {
+	GpioMode mode;
+	GpioInputType input_type; // Can be left NULL if this pin is used for output
+	GpioOutputType output_type; // Can be left NULL if this pin is used for input
+	GpioRes pupd;
+} GpioSettings;
 
 //Peripheral Clock Setup
-void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx,uint8_t EnorDi);
+void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di);
 
 //Initialization
-void GPIO_Init(GPIO_Handle_t* pGPIOHandle);
-void GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
+void gpio_init(GpioAddress *address, GpioSettings);
+void gpio_deinit(GpioAddress *address);
 
 //Read and Write
-uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
-uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx);
-void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value);
-void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint8_t Value);
-void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint8_t gpio_read_pin(GpioAddress *address);
+uint16_t gpio_read_port(GpioRegDef *port);
+void gpio_write_pin(GpioAddress *address, GpioState state);
+void gpio_write_port(GpioRegDef *port, GpioState state);
+void gpio_toggle_pin(GpioAddress *address);
 
 // IRQ Configuration and ISR Handling
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi);
-void GPIO_IRQHandling(uint8_t PinNumber);
+void gpio_irq_config(uint8_t irq_numbeer, uint8_t irq_priority,
+		uint8_t en_or_di);
+void gpio_irq_handling(GpioAddress *address);
 
 #endif /* INC_STM32F103C8_GPIO_DRIVER_H_ */

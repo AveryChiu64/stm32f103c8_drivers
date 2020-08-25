@@ -1,4 +1,3 @@
-
 #ifndef INC_STM32F103C8_H_
 #define INC_STM32F103C8_H_
 
@@ -56,10 +55,9 @@ typedef struct {
 	__vo uint32_t APB1ENR; // APB1 peripheral clock enable register
 	__vo uint32_t BDCR; // Backup domain control register
 	__vo uint32_t CSR; // Control/status register
-}RCC_RegDef_t;
+} RccRegDef;
 
-typedef struct
-{
+typedef struct {
 	__vo uint32_t CRL; // Port configuration register low
 	__vo uint32_t CRH; // Port configuration register high
 	__vo uint32_t IDR; // Port input data register
@@ -67,10 +65,9 @@ typedef struct
 	__vo uint32_t BSRR; // Port bit set/reset register
 	__vo uint32_t BRR; // Port bit reset register
 	__vo uint32_t LCKR; // Port configuration lock register
-}GPIO_RegDef_t;
+} GpioRegDef;
 
-typedef struct
-{
+typedef struct {
 	__vo uint32_t EVCR; // Event control register
 	__vo uint32_t MAPR; // AF remap and debug I/O configuration register
 	__vo uint32_t EXTICR1; // External interrupt configuration register
@@ -78,18 +75,18 @@ typedef struct
 	__vo uint32_t EXTICR3;
 	__vo uint32_t EXTICR4;
 	__vo uint32_t MAPR2;
-}AFIO_RegDef_t;
+} AfioRegDef;
 
 // Peripheral Definitions
-#define GPIOA ((GPIO_RegDef_t*)GPIOA_BASEADDR)
-#define GPIOB ((GPIO_RegDef_t*)GPIOB_BASEADDR)
-#define GPIOC ((GPIO_RegDef_t*)GPIOC_BASEADDR)
-#define GPIOD ((GPIO_RegDef_t*)GPIOD_BASEADDR)
-#define GPIOE ((GPIO_RegDef_t*)GPIOE_BASEADDR)
-#define GPIOF ((GPIO_RegDef_t*)GPIOF_BASEADDR)
-#define GPIOG ((GPIO_RegDef_t*)GPIOG_BASEADDR)
+#define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
+#define GPIOB ((GpioRegDef*)GPIOB_BASEADDR)
+#define GPIOC ((GpioRegDef*)GPIOC_BASEADDR)
+#define GPIOD ((GpioRegDef*)GPIOD_BASEADDR)
+#define GPIOE ((GpioRegDef*)GPIOE_BASEADDR)
+#define GPIOF ((GpioRegDef*)GPIOF_BASEADDR)
+#define GPIOG ((GpioRegDef*)GPIOG_BASEADDR)
 
-#define RCC ((RCC_RegDef_t*)RCC_BASEADDR)
+#define RCC ((RccRegDef*)RCC_BASEADDR)
 
 // Clock Enable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_EN() (RCC->APB2ENR |= (1 << 2))
