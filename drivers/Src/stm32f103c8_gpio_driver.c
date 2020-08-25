@@ -65,8 +65,8 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	address->port->CRL &= ~( 0x3 << (4 * address->pin + 2));
 	address->port->CRL |= (settings->type << (4 * address->pin + 2));
 
-	address->port->ODR |= (settings->pupd << (address->pin));
 	address->port->ODR &= ~( 0x3 << (address->pin));
+	address->port->ODR |= (settings->pupd << (address->pin));
 }
 
 void gpio_deinit(const GpioAddress *address);
