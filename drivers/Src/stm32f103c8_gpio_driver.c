@@ -89,8 +89,15 @@ void gpio_deinit(GpioRegDef *port) {
 		GPIOG_REG_RESET();
 	}
 }
-uint8_t gpio_read_pin(GpioAddress *address);
-uint16_t gpio_read_port(GpioRegDef *port);
+uint8_t gpio_read_pin(GpioAddress *address) {
+	// We shift the bit we want to the LSB and mask the other bits
+	return (uint8_t)((address->port->IDR >> address->pin) & 0x00000001);
+}
+
+uint16_t gpio_read_port(GpioRegDef *port) {
+	return (uint16_t)(address->port->IDR);
+}
+
 void gpio_write_pin(GpioAddress *address, GpioState state);
 void gpio_write_port(GpioRegDef *port, GpioState state);
 void gpio_toggle_pin(GpioAddress *address);
