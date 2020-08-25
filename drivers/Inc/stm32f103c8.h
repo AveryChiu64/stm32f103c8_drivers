@@ -45,7 +45,7 @@
 #define USART1_BASEADDR (APB2PERIPH_BASE + 0x3800)
 
 // Base Addresses of peripherals hanging on AHB bus
-#define RCC_BASEADDR (AHBPERIPH_BASE + 0x1000)
+#define RCC_BASEADDR (AHBPERIPH_BASE + 0x9000)
 
 // Peripheral Register Definition Structures
 typedef struct {
@@ -156,5 +156,8 @@ typedef struct {
 #define DISABLE 0
 #define SET ENABLE
 #define RESET DISABLE
+
+// Drivers
+#include "stm32f103c8_gpio_driver.h"
 
 #endif /* INC_STM32F103C8_H_ */
