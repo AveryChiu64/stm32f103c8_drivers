@@ -111,7 +111,9 @@ void gpio_write_port(GpioRegDef *port, uint16_t value) {
 	port-> ODR = value;
 }
 
-void gpio_toggle_pin(GpioAddress *address);
+void gpio_toggle_pin(GpioAddress *address) {
+	address->port->ODR ^= (1 << PinNumber);
+}
 
 // IRQ Configuration and ISR Handling
 void gpio_irq_config(uint8_t irq_numbeer, uint8_t irq_priority,
