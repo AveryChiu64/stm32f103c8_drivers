@@ -105,7 +105,11 @@ typedef struct {
 #define SPI1_PCLK_EN() (RCC->APB2ENR |= (1 << 12))
 
 // Clock Enable Macros for USARTx Peripherals
-
+#define USART1_PCLK_EN() (RCC->APB2ENR |= (1 << 14))
+#define USART2_PCLK_EN() (RCC->APB1ENR |= (1 << 17))
+#define USART3_PCLK_EN() (RCC->APB1ENR |= (1 << 18))
+#define USART4_PCLK_EN() (RCC->APB1ENR |= (1 << 19))
+#define USART5_PCLK_EN() (RCC->APB1ENR |= (1 << 20))
 
 // Clock Disable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_DI() (RCC->APB2ENR &= ~(1 << 2))
