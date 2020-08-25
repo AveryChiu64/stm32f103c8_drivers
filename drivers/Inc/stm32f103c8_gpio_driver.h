@@ -3,6 +3,8 @@
 
 #include "stm32f103c8.h"
 
+#define NUM_PINS 15
+
 typedef struct {
 	GpioRegDef *port;
 	uint8_t pin;
@@ -41,7 +43,7 @@ void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di);
 
 //Initialization
 void gpio_init(GpioAddress *address, GpioSettings *settings);
-void gpio_deinit(GpioAddress *address);
+void gpio_deinit(GpioRegDef *port);
 
 //Read and Write
 uint8_t gpio_read_pin(GpioAddress *address);

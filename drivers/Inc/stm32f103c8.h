@@ -48,7 +48,7 @@ typedef struct {
 	__vo uint32_t CR; // Clock control register
 	__vo uint32_t CFGR; // Clock configuration register
 	__vo uint32_t CIR; // Clock interrupt register
-	__vo uint32_t PB2RSTR; // APB2 peripheral reset register
+	__vo uint32_t APB2RSTR; // APB2 peripheral reset register
 	__vo uint32_t APB1RSTR; // APB1 peripheral reset register
 	__vo uint32_t AHBENR; // AHB peripheral clock enable register
 	__vo uint32_t APB2ENR; // APB2 peripheral clock enable register
@@ -105,6 +105,7 @@ typedef struct {
 #define SPI1_PCLK_EN() (RCC->APB2ENR |= (1 << 12))
 
 // Clock Enable Macros for USARTx Peripherals
+
 
 // Clock Disable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_DI() (RCC->APB2ENR &= ~(1 << 2))
