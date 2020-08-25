@@ -89,17 +89,28 @@ void gpio_deinit(GpioRegDef *port) {
 		GPIOG_REG_RESET();
 	}
 }
-uint8_t gpio_read_pin(GpioAddress *address) {
+GpioState gpio_read_pin(GpioAddress *address) {
 	// We shift the bit we want to the LSB and mask the other bits
-	return (uint8_t)((address->port->IDR >> address->pin) & 0x00000001);
+	return (GpioState)((address->port->IDR >> address->pin) & 0x00000001);
 }
 
 uint16_t gpio_read_port(GpioRegDef *port) {
-	return (uint16_t)(address->port->IDR);
+	return (uint16_t)(port->IDR);
 }
 
-void gpio_write_pin(GpioAddress *address, GpioState state);
-void gpio_write_port(GpioRegDef *port, GpioState state);
+void gpio_write_pin(GpioAddress *address, GpioState state) {
+	if(state == GPIO_STATE_HIGH) {
+		address->port->ODR |= (1 << address->pin);
+	}
+	else {
+		address->port->ODR &= ~(1 << address->pin);
+	}
+}
+
+void gpio_write_port(GpioRegDef *port, uint16_t value) {
+	port-> ODR = value;
+}
+
 void gpio_toggle_pin(GpioAddress *address);
 
 // IRQ Configuration and ISR Handling

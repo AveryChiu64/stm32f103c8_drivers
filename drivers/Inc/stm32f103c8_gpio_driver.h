@@ -49,7 +49,7 @@ void gpio_deinit(GpioRegDef *port);
 uint8_t gpio_read_pin(GpioAddress *address);
 uint16_t gpio_read_port(GpioRegDef *port);
 void gpio_write_pin(GpioAddress *address, GpioState state);
-void gpio_write_port(GpioRegDef *port, GpioState state);
+void gpio_write_port(GpioRegDef *port, uint16_t value);
 void gpio_toggle_pin(GpioAddress *address);
 
 // IRQ Configuration and ISR Handling
