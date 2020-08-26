@@ -16,6 +16,12 @@ typedef enum {
 } GpioState;
 
 typedef enum {
+  INTERRUPT_EDGE_RISING = 0,
+  INTERRUPT_EDGE_FALLING,
+  INTERRUPT_EDGE_RISING_FALLING,
+} GpioInterruptEdge;
+
+typedef enum {
 	ANALOG_INPUT = 0,
 	FLOATING_INPUT,
 	PUPD_INPUT,
@@ -37,6 +43,7 @@ typedef struct {
 	GpioMode mode;
 	GpioType type;
 	GpioRes pupd;
+	GpioInterruptEdge edge;
 } GpioSettings;
 
 //Peripheral Clock Setup

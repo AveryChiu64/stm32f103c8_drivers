@@ -74,10 +74,7 @@ typedef struct {
 typedef struct {
 	__vo uint32_t EVCR; // Event control register
 	__vo uint32_t MAPR; // AF remap and debug I/O configuration register
-	__vo uint32_t EXTICR1; // External interrupt configuration register
-	__vo uint32_t EXTICR2;
-	__vo uint32_t EXTICR3;
-	__vo uint32_t EXTICR4;
+	__vo uint32_t EXTICR[4]; // External interrupt configuration register
 	__vo uint32_t MAPR2;
 } AfioRegDef;
 

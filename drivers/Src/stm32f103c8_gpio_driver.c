@@ -65,29 +65,38 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	if (address->pin > NUM_PINS) {
 		printf("Pin number out of range\n");
 	}
-
 	if (!settings->pupd) {
 		settings->pupd = 0;
 	}
 
-	if(address->pin <= MAX_PIN_NUM_CRL) {
+	if (address->pin <= MAX_PIN_NUM_CRL) {
 		address->port->CRL &= ~(0x3 << (4 * (address->pin)));
 		address->port->CRL |= (settings->mode << (4 * (address->pin)));
 
 		address->port->CRL &= ~(0x3 << (4 * (address->pin) + 2));
 		address->port->CRL |= (settings->type << (4 * (address->pin) + 2));
-	}
-	else {
-		address->port->CRH &= ~(0x3 << (4 * ((address->pin) % 8 )));
-		address->port->CRH |= (settings->mode << (4 * ((address->pin) % 8 )));
+	} else {
+		address->port->CRH &= ~(0x3 << (4 * ((address->pin) % 8)));
+		address->port->CRH |= (settings->mode << (4 * ((address->pin) % 8)));
 
 		address->port->CRH &= ~(0x3 << (4 * (address->pin) + 2));
-		address->port->CRH |= (settings->type << (4 * ((address->pin) % 8 ) + 2));
+		address->port->CRH |=
+				(settings->type << (4 * ((address->pin) % 8) + 2));
 	}
-
 
 	address->port->ODR &= ~(0x3 << (address->pin));
 	address->port->ODR |= (settings->pupd << (address->pin));
+
+	if (settings->edge == INTERRUPT_EDGE_RISING) {
+		EXTI->RTSR |= (1 << (address->pin));
+		EXTI->FTSR &= ~(1 << (address->pin));
+	} else if (settings->edge == INTERRUPT_EDGE_FALLING) {
+		EXTI->FTSR |= (1 << (address->pin));
+		EXTI->RTSR &= ~(1 << (address->pin));
+	} else {
+		EXTI->FTSR |= (1 << (address->pin));
+		EXTI->RTSR &= ~(1 << (address->pin));
+	}
 }
 
 /*******************************************************************
@@ -130,7 +139,7 @@ void gpio_deinit(GpioRegDef *port) {
  */
 
 GpioState gpio_read_pin(GpioAddress *address) {
-	// We shift the bit we want to the LSB and mask the other bits
+// We shift the bit we want to the LSB and mask the other bits
 	return (GpioState) ((address->port->IDR >> address->pin) & 0x00000001);
 }
 
