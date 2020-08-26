@@ -81,6 +81,15 @@ typedef struct {
 	__vo uint32_t MAPR2;
 } AfioRegDef;
 
+typedef struct {
+	__vo uint32_t IMR; // Interrupt mask register
+	__vo uint32_t EMR; // Event mask register
+	__vo uint32_t RTSR; // Rising trigger selection register
+	__vo uint32_t FTSR; // Falling trigger selection register
+	__vo uint32_t SWIER; // Software interrupt event register
+	__vo uint32_t PR; // Pending register
+} ExtiRegDef;
+
 // Peripheral Definitions
 #define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
 #define GPIOB ((GpioRegDef*)GPIOB_BASEADDR)
@@ -91,6 +100,8 @@ typedef struct {
 #define GPIOG ((GpioRegDef*)GPIOG_BASEADDR)
 
 #define RCC ((RccRegDef*)RCC_BASEADDR)
+
+#define EXTI ((ExtiRegDef*)EXTI_BASEADDR)
 
 // Clock Enable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_EN() (RCC->APB2ENR |= (1 << 2))
