@@ -159,7 +159,7 @@ uint16_t gpio_read_port(GpioRegDef *port) {
  */
 
 void gpio_write_pin(GpioAddress *address, GpioState state) {
-	if (state == GPIO_STATE_LOW) {
+	if (state == GPIO_STATE_HIGH) {
 		address->port->ODR |= (1 << address->pin);
 	} else {
 		address->port->ODR &= ~(1 << address->pin);
