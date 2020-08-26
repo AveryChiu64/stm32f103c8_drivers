@@ -5,9 +5,9 @@ void delay(void) {
 }
 
 int main(void) {
-	GpioAddress led = { .pin = 13, .port = GPIOC, };
+	GpioAddress led = { .pin = 0, .port = GPIOA, };
 	GpioSettings settings = { .mode = OUTPUT_MODE_10MHZ, .type =
-			PUSH_PULL_OUTPUT, };
+			PUSH_PULL_OUTPUT, .pupd = INPUT_PULL_UP };
 	gpio_peri_clock_ctrl(led.port, ENABLE);
 	gpio_init(&led, &settings);
 	while (1) {
