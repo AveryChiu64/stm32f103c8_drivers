@@ -47,7 +47,7 @@ void gpio_init(GpioAddress *address, GpioSettings *settings);
 void gpio_deinit(GpioRegDef *port);
 
 //Read and Write
-uint8_t gpio_read_pin(GpioAddress *address);
+GpioState gpio_read_pin(GpioAddress *address);
 uint16_t gpio_read_port(GpioRegDef *port);
 void gpio_write_pin(GpioAddress *address, GpioState state);
 void gpio_write_port(GpioRegDef *port, uint16_t value);
