@@ -4,6 +4,7 @@
 #include "stm32f103c8.h"
 
 #define NUM_PINS 15
+#define MAX_PIN_NUM_CRL 7
 
 typedef struct {
 	GpioRegDef *port;

@@ -70,11 +70,21 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 		settings->pupd = 0;
 	}
 
-	address->port->CRL &= ~(0x3 << (4 * address->pin));
-	address->port->CRL |= (settings->mode << (4 * address->pin));
+	if(address->pin <= MAX_PIN_NUM_CRL) {
+		address->port->CRL &= ~(0x3 << (4 * (address->pin)));
+		address->port->CRL |= (settings->mode << (4 * (address->pin)));
 
-	address->port->CRL &= ~(0x3 << (4 * address->pin + 2));
-	address->port->CRL |= (settings->type << (4 * address->pin + 2));
+		address->port->CRL &= ~(0x3 << (4 * (address->pin) + 2));
+		address->port->CRL |= (settings->type << (4 * (address->pin) + 2));
+	}
+	else {
+		address->port->CRH &= ~(0x3 << (4 * ((address->pin) % 8 )));
+		address->port->CRH |= (settings->mode << (4 * ((address->pin) % 8 )));
+
+		address->port->CRH &= ~(0x3 << (4 * (address->pin) + 2));
+		address->port->CRH |= (settings->type << (4 * ((address->pin) % 8 ) + 2));
+	}
+
 
 	address->port->ODR &= ~(0x3 << (address->pin));
 	address->port->ODR |= (settings->pupd << (address->pin));
