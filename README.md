@@ -6,3 +6,15 @@ https://www.st.com/en/development-tools/stm32cubeide.html
 
 The reference manual can be found here \
 https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf
+
+## Getting Started
+```bash
+# Clone the repo
+git clone https://github.com/uw-midsun/firmware.git firmware
+cd firmware
+
+```
+
+## License
+
+The firmware is made available under the [MIT License](https://opensource.org/licenses/MIT).
