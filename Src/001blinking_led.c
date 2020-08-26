@@ -10,8 +10,7 @@ int main(void) {
 			PUSH_PULL_OUTPUT, };
 	gpio_peri_clock_ctrl(led.port, ENABLE);
 	gpio_init(&led, &settings);
+	gpio_write_pin(&led,GPIO_STATE_HIGH);
 	while (1) {
-		gpio_toggle_pin(&led);
-		delay();
 	}
 }
