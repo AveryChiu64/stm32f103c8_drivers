@@ -97,8 +97,11 @@ typedef struct {
 #define GPIOG ((GpioRegDef*)GPIOG_BASEADDR)
 
 #define RCC ((RccRegDef*)RCC_BASEADDR)
-
+#define AFIO ((AfioRegDef*)AFIO_BASEADDR)
 #define EXTI ((ExtiRegDef*)EXTI_BASEADDR)
+
+// Clock Enable Macro for AFIO
+#define AFIO_PCLK_EN() (RCC->APB2ENR |= (1 << 0))
 
 // Clock Enable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_EN() (RCC->APB2ENR |= (1 << 2))
@@ -124,6 +127,9 @@ typedef struct {
 #define USART3_PCLK_EN() (RCC->APB1ENR |= (1 << 18))
 #define USART4_PCLK_EN() (RCC->APB1ENR |= (1 << 19))
 #define USART5_PCLK_EN() (RCC->APB1ENR |= (1 << 20))
+
+// Clock Enable Macro for AFIO
+#define AFIO_PCLK_DI() (RCC->APB2ENR &= ~(1 << 0))
 
 // Clock Disable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_DI() (RCC->APB2ENR &= ~(1 << 2))
@@ -159,6 +165,14 @@ typedef struct {
 #define GPIOF_REG_RESET() do{ (RCC->APB2RSTR |= (1 << 7)); (RCC->APB2RSTR &= ~(1 << 7)); } while(0)
 #define GPIOG_REG_RESET() do{ (RCC->APB2RSTR |= (1 << 8)); (RCC->APB2RSTR &= ~(1 << 8)); } while(0)
 
+// Returns port for given GPIOx base address
+#define GPIO_BASEADDR_TO_CODE(x) ((x == GPIOA) ? 0 : \
+								 (x == GPIOB) ? 1 : \
+								 (x == GPIOC) ? 2 : \
+							     (x == GPIOD) ? 3 : \
+								 (x == GPIOE) ? 4 : \
+								 (x == GPIOF) ? 5 : \
+								 (x == GPIOG) ? 6 : 0)
 // Generic Macros
 #define ENABLE 1
 #define DISABLE 0

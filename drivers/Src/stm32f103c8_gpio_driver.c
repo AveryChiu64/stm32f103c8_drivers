@@ -69,6 +69,7 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 		settings->pupd = 0;
 	}
 
+	// Configure the mode
 	if (address->pin <= MAX_PIN_NUM_CRL) {
 		address->port->CRL &= ~(0x3 << (4 * (address->pin)));
 		address->port->CRL |= (settings->mode << (4 * (address->pin)));
@@ -84,9 +85,11 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 				(settings->type << (4 * ((address->pin) % 8) + 2));
 	}
 
+	// Configure the pin number and pull up/pull down setting
 	address->port->ODR &= ~(0x3 << (address->pin));
 	address->port->ODR |= (settings->pupd << (address->pin));
 
+	// Configure the interrupt EXTI line
 	if (settings->edge == INTERRUPT_EDGE_RISING) {
 		EXTI->RTSR |= (1 << (address->pin));
 		EXTI->FTSR &= ~(1 << (address->pin));
@@ -97,6 +100,10 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 		EXTI->FTSR |= (1 << (address->pin));
 		EXTI->RTSR &= ~(1 << (address->pin));
 	}
+
+	// Enable AFIO clock and configure GPIO port selection
+	AFIO_PCLK_EN();
+	AFIO->EXTICR[(address->pin) / 4] |= (GPIO_BASEADDR_TO_CODE(address->port) << (address->pin) % 4 );
 }
 
 /*******************************************************************
