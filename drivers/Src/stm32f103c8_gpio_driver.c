@@ -70,12 +70,15 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	}
 
 	// Configure mode
-	address->port->CR[(address->pin) / 8] &= ~(0x3 << (4 * ((address->pin) % 8)));
-	address->port->CR[(address->pin) / 8] |= (settings->mode << (4 * ((address->pin) % 8)));
+	address->port->CR[(address->pin) / 8] &=
+			~(0x3 << (4 * ((address->pin) % 8)));
+	address->port->CR[(address->pin) / 8] |= (settings->mode
+			<< (4 * ((address->pin) % 8)));
 
 	// Configure type
 	address->port->CR[(address->pin) / 8] &= ~(0x3 << (4 * (address->pin) + 2));
-	address->port->CR[(address->pin) / 8] |= (settings->type << (4 * ((address->pin) % 8) + 2));
+	address->port->CR[(address->pin) / 8] |= (settings->type
+			<< (4 * ((address->pin) % 8) + 2));
 
 	// Configure the pin number and pull up/pull down setting
 	address->port->ODR &= ~(0x3 << (address->pin));
@@ -205,6 +208,22 @@ void gpio_toggle_pin(GpioAddress *address) {
 }
 
 // IRQ Configuration and ISR Handling
-void gpio_irq_config(uint8_t irq_number, uint8_t irq_priority,
-		uint8_t en_or_di);
+void gpio_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
+	uint8_t index = irq_number / 32;
+	uint8_t section = irq_number % 32;
+	if (en_or_di == ENABLE) {
+		*(NVIC_ISER_BASEADDR + index * 4) |= (1 << section);
+	} else {
+		*(NVIC_ICER_BASEADDR + index * 4) |= (1 << section);
+	}
+}
+
+void gpio_irq_priority_config(uint8_t irq_number, uint8_t irq_priority) {
+	// Find IPR register
+	uint8_t index = irq_number / 4;
+	uint8_t iprx_section = irq_number % 4;
+	uint8_t shift = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
+	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << (8 * iprx_section));
+
+}
 void gpio_irq_handling(GpioAddress *address);

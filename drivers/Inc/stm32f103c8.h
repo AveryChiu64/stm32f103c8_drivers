@@ -4,6 +4,13 @@
 #include <stdint.h>
 #define __vo volatile
 
+// ARM Cortex M3 Processor NVIC Register Addresses
+#define NVIC_ISER_BASEADDR ((__vo uint32_t*)0XE000E100)
+#define NVIC_ICER_BASEADDR ((__vo uint32_t*)0XE000E180)
+#define NVIC_IPR_BASEADDR ((__vo uint32_t*)0xE000E400)
+
+#define NO_PR_BITS_IMPLEMENTED 4
+
 // Base Addresses of Flash and SRAM memories
 #define FLASH_BASEADDR 0x08000000U
 #define SRAM1_BASEADDR 0x20000000U
