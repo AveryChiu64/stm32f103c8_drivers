@@ -7,7 +7,9 @@
 #define MAX_PIN_NUM_CRL 7
 
 typedef struct {
+	// The port is the address of the location of the port
 	GpioRegDef *port;
+	// The pin number
 	uint8_t pin;
 } GpioAddress;
 
@@ -16,9 +18,10 @@ typedef enum {
 } GpioState;
 
 typedef enum {
-  INTERRUPT_EDGE_RISING = 0,
-  INTERRUPT_EDGE_FALLING,
-  INTERRUPT_EDGE_RISING_FALLING,
+	NO_INTERRUPT = 0,
+	INTERRUPT_EDGE_RISING,
+	INTERRUPT_EDGE_FALLING,
+	INTERRUPT_EDGE_RISING_FALLING,
 } GpioInterruptEdge;
 
 typedef enum {
@@ -62,7 +65,7 @@ void gpio_toggle_pin(GpioAddress *address);
 
 // IRQ Configuration and ISR Handling
 void gpio_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di);
-void gpio_irq_priority_config(uint8_t irq_number,uint8_t irq_priority);
-void gpio_irq_handling(GpioAddress *address);
+void gpio_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority);
+void gpio_irq_handling(uint8_t pin_number);
 
 #endif /* INC_STM32F103C8_GPIO_DRIVER_H_ */

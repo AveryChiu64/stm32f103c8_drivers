@@ -68,6 +68,9 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	if (!settings->pupd) {
 		settings->pupd = 0;
 	}
+	if (!settings->edge) {
+		settings->edge = NO_INTERRUPT;
+	}
 
 	// Configure mode
 	address->port->CR[(address->pin) / 8] &=
@@ -85,21 +88,23 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	address->port->ODR |= (settings->pupd << (address->pin));
 
 	// Configure the interrupt EXTI line
-	if (settings->edge == INTERRUPT_EDGE_RISING) {
-		EXTI->RTSR |= (1 << (address->pin));
-		EXTI->FTSR &= ~(1 << (address->pin));
-	} else if (settings->edge == INTERRUPT_EDGE_FALLING) {
-		EXTI->FTSR |= (1 << (address->pin));
-		EXTI->RTSR &= ~(1 << (address->pin));
-	} else {
-		EXTI->FTSR |= (1 << (address->pin));
-		EXTI->RTSR &= ~(1 << (address->pin));
+	if (settings->edge != NO_INTERRUPT) {
+		if (settings->edge == INTERRUPT_EDGE_RISING) {
+			EXTI->RTSR |= (1 << (address->pin));
+			EXTI->FTSR &= ~(1 << (address->pin));
+		} else if (settings->edge == INTERRUPT_EDGE_FALLING) {
+			EXTI->FTSR |= (1 << (address->pin));
+			EXTI->RTSR &= ~(1 << (address->pin));
+		} else {
+			EXTI->FTSR |= (1 << (address->pin));
+			EXTI->RTSR &= ~(1 << (address->pin));
+		}
+		// Enable AFIO clock and configure GPIO port selection
+		AFIO_PCLK_EN();
+		AFIO->EXTICR[(address->pin) / 4] |=
+				(GPIO_BASEADDR_TO_CODE(address->port) << (address->pin) % 4);
 	}
 
-	// Enable AFIO clock and configure GPIO port selection
-	AFIO_PCLK_EN();
-	AFIO->EXTICR[(address->pin) / 4] |= (GPIO_BASEADDR_TO_CODE(address->port)
-			<< (address->pin) % 4);
 }
 
 /*******************************************************************
@@ -218,7 +223,7 @@ void gpio_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
 	}
 }
 
-void gpio_irq_priority_config(uint8_t irq_number, uint8_t irq_priority) {
+void gpio_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) {
 	// Find IPR register
 	uint8_t index = irq_number / 4;
 	uint8_t iprx_section = irq_number % 4;
@@ -226,9 +231,9 @@ void gpio_irq_priority_config(uint8_t irq_number, uint8_t irq_priority) {
 	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << shift);
 
 }
-void gpio_irq_handling(GpioAddress *address) {
+void gpio_irq_handling(uint8_t pin_number) {
 	// Clear the EXTI pending register corresponding to the pin number
-	if(EXTI->PR & (1 << address->pin)) {
-		EXTI->PR |= (1 << address->pin);
+	if (EXTI->PR & (1 << pin_number)) {
+		EXTI->PR |= (1 << pin_number);
 	}
 }
