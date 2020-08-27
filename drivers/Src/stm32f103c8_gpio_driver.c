@@ -103,6 +103,7 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 		AFIO_PCLK_EN();
 		AFIO->EXTICR[(address->pin) / 4] |=
 				(GPIO_BASEADDR_TO_CODE(address->port) << (address->pin) % 4);
+		EXTI->IMR |= (1 << (address->pin));
 	}
 
 }
