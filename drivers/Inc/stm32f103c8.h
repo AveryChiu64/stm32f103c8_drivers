@@ -62,8 +62,7 @@ typedef struct {
 } RccRegDef;
 
 typedef struct {
-	__vo uint32_t CRL; // Port configuration register low
-	__vo uint32_t CRH; // Port configuration register high
+	__vo uint32_t CR[2]; // Port configuration register
 	__vo uint32_t IDR; // Port input data register
 	__vo uint32_t ODR; // Port output data register
 	__vo uint32_t BSRR; // Port bit set/reset register
