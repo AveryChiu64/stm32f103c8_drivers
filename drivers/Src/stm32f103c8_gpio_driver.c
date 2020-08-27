@@ -222,8 +222,13 @@ void gpio_irq_priority_config(uint8_t irq_number, uint8_t irq_priority) {
 	// Find IPR register
 	uint8_t index = irq_number / 4;
 	uint8_t iprx_section = irq_number % 4;
-	uint8_t shift = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
-	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << (8 * iprx_section));
+	uint8_t shift = ((8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED));
+	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << shift);
 
 }
-void gpio_irq_handling(GpioAddress *address);
+void gpio_irq_handling(GpioAddress *address) {
+	// Clear the EXTI pending register corresponding to the pin number
+	if(EXTI->PR & (1 << address->pin)) {
+		EXTI->PR |= (1 << address->pin);
+	}
+}
