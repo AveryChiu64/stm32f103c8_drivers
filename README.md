@@ -10,8 +10,7 @@ https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102
 ## Getting Started
 ```bash
 # Clone the repo
-git clone https://github.com/uw-midsun/firmware.git firmware
-cd firmware
+git clone https://github.com/AveryChiu64/stm32f103c8_drivers.git
 
 ```
 
