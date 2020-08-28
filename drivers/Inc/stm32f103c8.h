@@ -85,6 +85,17 @@ typedef struct {
 } AfioRegDef;
 
 typedef struct {
+	__vo uint32_t CR[2]; // control register
+	__vo uint32_t SR; // status register
+	__vo uint32_t DR; // data register
+	__vo uint32_t CRCPR; //CRC polynomial register
+	__vo uint32_t RXCRCR; // RX CRC register
+	__vo uint32_t TXCRCR; // TX CRC register
+	__vo uint32_t I2SCFGR; // I2S configuration register
+	__vo uint32_t I2SPR; // I2S prescaler register
+}SpiRegDef;
+
+typedef struct {
 	__vo uint32_t IMR; // Interrupt mask register
 	__vo uint32_t EMR; // Event mask register
 	__vo uint32_t RTSR; // Rising trigger selection register
@@ -101,6 +112,10 @@ typedef struct {
 #define GPIOE ((GpioRegDef*)GPIOE_BASEADDR)
 #define GPIOF ((GpioRegDef*)GPIOF_BASEADDR)
 #define GPIOG ((GpioRegDef*)GPIOG_BASEADDR)
+
+#define SPI1 ((SpiRegDef*)SPI1_BASEADDR)
+#define SPI2 ((SpiRegDef*)SPI2_BASEADDR)
+#define SPI3 ((SpiRegDef*)SPI3_BASEADDR)
 
 #define RCC ((RccRegDef*)RCC_BASEADDR)
 #define AFIO ((AfioRegDef*)AFIO_BASEADDR)
