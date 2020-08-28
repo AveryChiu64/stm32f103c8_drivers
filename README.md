@@ -14,7 +14,7 @@ git clone https://github.com/AveryChiu64/stm32f103c8_drivers.git
 
 ```
 ## Credits
-These drivers are loosely based off of a course called Mastering Microcontroller with Embedded Driver Development from Udemy, but the driver is a different
+These drivers are loosely based off of a course called Mastering Microcontroller with Embedded Driver Development from Udemy, but the STM32 is a different
 model from the one used in that course.
 
 ## License
