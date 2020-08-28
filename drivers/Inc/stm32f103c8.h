@@ -122,7 +122,6 @@ typedef struct {
 #define EXTI ((ExtiRegDef*)EXTI_BASEADDR)
 
 // Clock Enable Macro for AFIO
-#define AFIO_PCLK_EN() (RCC->APB2ENR |= (1 << 0))
 
 // Clock Enable Macros for GPIOx Peripherals
 #define GPIOA_PCLK_EN() (RCC->APB2ENR |= (1 << 2))
