@@ -4,7 +4,6 @@
 #include "stm32f103c8.h"
 
 #define NUM_PINS 15
-#define MAX_PIN_NUM_CRL 7
 
 typedef struct {
 	// The port is the address of the location of the port
