@@ -13,7 +13,9 @@ https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102
 git clone https://github.com/AveryChiu64/stm32f103c8_drivers.git
 
 ```
+## Credits
+These drivers are loosely based off of a course called Mastering Microcontroller with Embedded Driver Development from Udemy, but the driver is a different
+model from the one used in that course.
 
 ## License
-
 The firmware is made available under the [MIT License](https://opensource.org/licenses/MIT).
