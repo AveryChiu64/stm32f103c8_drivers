@@ -20,7 +20,38 @@ void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di) {
 	}
 }
 
-void spi_init(SpiHandler *handler, SpiSettings *settings);
+void spi_init(SpiHandler *handler) {
+
+	// Configure device mode
+	handler->address->CR[0] |= ((handler->settings.device_mode) << SPI_CR1_MSTR);
+
+	// Bus configuration
+	switch (handler->settings.bus_config) {
+	case FULL_DUPLEX:
+		handler->address->CR[0] &= ~(1 << SPI_CR1_BIDI_MODE);
+		break;
+	case HALF_DUPLEX:
+		handler->address->CR[0] |= (1 << SPI_CR1_BIDI_MODE);
+		break;
+	case SIMPLEX_RX:
+		handler->address->CR[0] &= ~(1 << SPI_CR1_BIDI_MODE);
+		handler->address->CR[0] |= (1 << SPI_CR1_RX_ONLY);
+		break;
+	}
+
+	// Configure data frame format
+	handler->address->CR[0] |= ((handler->settings.dff) << SPI_CR1_DFF);
+
+	// Configure SPI mode
+	// Note that the bit for CPOL is right beside CPHA
+	handler->address->CR[0] |= ((handler->settings.mode) << SPI_CR1_CPHA);
+
+	// Configure ssm
+	handler->address->CR[0] |= ((handler->settings.ssm) << SPI_CR1_SSM);
+
+	// Configure baud rate
+	handler->address->CR[0] |= ((handler->settings.br) << SPI_CR1_BR1);
+}
 void spi_deinit(SpiRegDef *address);
 
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len);

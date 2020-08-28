@@ -8,7 +8,13 @@ typedef enum {
 } SpiDeviceMode;
 
 typedef enum {
-	DF_8_BIT_ = 0, DF_16_BIT = 1
+	FULL_DUPLEX = 0,
+	HALF_DUPLEX,
+	SIMPLEX_RX,
+}SpiBusConfig;
+
+typedef enum {
+	SPI_DFF_8_BIT = 0, SPI_DFF_16_BIT = 1
 } SpiDataFrameFormat;
 
 typedef enum {
@@ -19,14 +25,27 @@ typedef enum {
 } SpiMode;
 
 typedef enum {
-	SSM_DISABLED = 0, SSM_ENABLED
+	SSM_DI = 0, SSM_EN
 } SpiSoftwareSlaveManagement;
+
+typedef enum {
+	SPI_SCLK_SPEED_DIV2 = 0,
+	SPI_SCLK_SPEED_DIV4,
+	SPI_SCLK_SPEED_DIV8,
+	SPI_SCLK_SPEED_DIV16,
+	SPI_SCLK_SPEED_DIV32,
+	SPI_SCLK_SPEED_DIV64,
+	SPI_SCLK_SPEED_DIV128,
+	SPI_SCLK_SPEED_DIV256,
+}SpiBaudRate;
 
 typedef struct {
 	SpiDeviceMode device_mode;
-	SpiDataFrameFormat format;
+	SpiBusConfig bus_config;
+	SpiDataFrameFormat dff;
 	SpiMode mode;
 	SpiSoftwareSlaveManagement ssm;
+	SpiBaudRate br;
 } SpiSettings;
 
 typedef struct {
@@ -38,7 +57,7 @@ typedef struct {
 void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di);
 
 //Initialization
-void spi_init(SpiHandler *handler, SpiSettings *settings);
+void spi_init(SpiHandler *handler);
 void spi_deinit(SpiRegDef *address);
 
 // Data TX and RX

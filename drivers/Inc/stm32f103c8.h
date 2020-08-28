@@ -104,6 +104,47 @@ typedef struct {
 	__vo uint32_t PR; // Pending register
 } ExtiRegDef;
 
+// Bit position definitions for SPI registers
+typedef enum {
+	SPI_CR1_CPHA = 0,
+	SPI_CR1_CPOL,
+	SPI_CR1_MSTR,
+	SPI_CR1_BR1,
+	SPI_CR1_BR2,
+	SPI_CR1_BR3,
+	SPI_CR1_SPE,
+	SPI_CR1_LSB_FIRST,
+	SPI_CR1_SSI,
+	SPI_CR1_SSM,
+	SPI_CR1_RX_ONLY,
+	SPI_CR1_DFF,
+	SPI_CR1_CRC_NEXT,
+	SPI_CR1_CRC_EN,
+	SPI_CR1_BIDI_OE,
+	SPI_CR1_BIDI_MODE
+}SpiControlRegister1;
+
+typedef enum {
+	SPI_CR2_RXDMAEN = 0,
+	SPI_CR2_TXDMAEN,
+	SPI_CR2_SSOE,
+	SPI_CR2_ERRIE = 5,
+	SPI_CR2_RXNEIE,
+	SPI_CR2_TXEIE,
+}SpiControlRegister2;
+
+typedef enum {
+	SPI_SR_RXNE = 0,
+	SPI_SR_RXNETXE,
+	SPI_SR_RXNECHSIDE,
+	SPI_SR_RXNEUDR,
+	SPI_SR_RXNECRC_ERR,
+	SPI_SR_RXNEMODF,
+	SPI_SR_RXNEOVR,
+	SPI_SR_RXNEBSY,
+}SpiStatusRegister;
+
+
 // Peripheral Definitions
 #define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
 #define GPIOB ((GpioRegDef*)GPIOB_BASEADDR)
