@@ -214,7 +214,16 @@ void gpio_toggle_pin(GpioAddress *address) {
 	address->port->ODR ^= (1 << address->pin);
 }
 
-// IRQ Configuration and ISR Handling
+/*******************************************************************
+ * NAME : gpio_irq__interrupt_config
+ *
+ * DESCRIPTION : IRQ Configuration and ISR Handling
+ *
+ * PARAMETERS:	int8_t 			irq_number		The IRQ number as denoted by the processor
+ * 				uint8_t 		en_or_di		Enable or disable
+ *
+ * OUTPUTS : 	void
+ */
 void gpio_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
 	uint8_t index = irq_number / 32;
 	uint8_t section = irq_number % 32;
@@ -225,6 +234,16 @@ void gpio_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
 	}
 }
 
+/*******************************************************************
+ * NAME : gpio_irq_priority_config
+ *
+ * DESCRIPTION : Configures the priority of each interrupt
+ *
+ * PARAMETERS:	int8_t 			irq_number		The IRQ number as denoted by the processor
+ * 				NvicIrqPriority irq_priority	The priority of the interrupt
+ *
+ * OUTPUTS : 	void
+ */
 void gpio_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) {
 	// Find IPR register
 	uint8_t index = irq_number / 4;
@@ -233,6 +252,16 @@ void gpio_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) 
 	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << shift);
 
 }
+
+/*******************************************************************
+ * NAME : gpio_irq_handling
+ *
+ * DESCRIPTION : Must be called by the ISR to clear the EXTI pending register
+ *
+ * PARAMETERS:	int8_t		pin_number		The pin number for the GPIO pin
+ *
+ * OUTPUTS : 	void
+ */
 void gpio_irq_handling(uint8_t pin_number) {
 	// Clear the EXTI pending register corresponding to the pin number
 	if (EXTI->PR & (1 << pin_number)) {
