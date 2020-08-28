@@ -64,6 +64,7 @@ void gpio_peri_clock_ctrl(GpioRegDef *port, uint8_t en_or_di) {
 void gpio_init(GpioAddress *address, GpioSettings *settings) {
 	if (address->pin > NUM_PINS) {
 		printf("Pin number out of range\n");
+		return;
 	}
 	if (!settings->pupd) {
 		settings->pupd = 0;
@@ -97,7 +98,7 @@ void gpio_init(GpioAddress *address, GpioSettings *settings) {
 			EXTI->RTSR &= ~(1 << (address->pin));
 		} else {
 			EXTI->FTSR |= (1 << (address->pin));
-			EXTI->RTSR &= ~(1 << (address->pin));
+			EXTI->RTSR |= (1 << (address->pin));
 		}
 		// Enable AFIO clock and configure GPIO port selection
 		AFIO_PCLK_EN();
