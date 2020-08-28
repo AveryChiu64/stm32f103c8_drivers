@@ -52,7 +52,6 @@ void spi_init(SpiHandler *handler) {
 	// Configure baud rate
 	handler->address->CR[0] |= ((handler->settings.br) << SPI_CR1_BR1);
 }
-void spi_deinit(SpiRegDef *address);
 
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len);
 void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len);

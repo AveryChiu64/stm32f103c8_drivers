@@ -58,7 +58,6 @@ void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di);
 
 //Initialization
 void spi_init(SpiHandler *handler);
-void spi_deinit(SpiRegDef *address);
 
 // Data TX and RX
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len);
