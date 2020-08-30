@@ -85,7 +85,8 @@ typedef struct {
 } AfioRegDef;
 
 typedef struct {
-	__vo uint32_t CR[2]; // control register
+	__vo uint32_t CR1; // control registers
+	__vo uint32_t CR2;
 	__vo uint32_t SR; // status register
 	__vo uint32_t DR; // data register
 	__vo uint32_t CRCPR; //CRC polynomial register
@@ -135,13 +136,13 @@ typedef enum {
 
 typedef enum {
 	SPI_SR_RXNE = 0,
-	SPI_SR_RXNETXE,
-	SPI_SR_RXNECHSIDE,
-	SPI_SR_RXNEUDR,
-	SPI_SR_RXNECRC_ERR,
-	SPI_SR_RXNEMODF,
-	SPI_SR_RXNEOVR,
-	SPI_SR_RXNEBSY,
+	SPI_SR_TXE,
+	SPI_SR_CHSIDE,
+	SPI_SR_UDR,
+	SPI_SR_CRC_ERR,
+	SPI_SR_MODF,
+	SPI_SR_OVR,
+	SPI_SR_BSY,
 }SpiStatusRegister;
 
 
@@ -269,6 +270,8 @@ typedef enum {
 #define DISABLE 0
 #define SET ENABLE
 #define RESET DISABLE
+#define FLAG_RESET	RESET
+#define FLAG_SET	SET
 
 // Drivers
 #include "stm32f103c8_gpio_driver.h"
