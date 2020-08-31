@@ -210,17 +210,38 @@ static void spi_txe_interrupt_handle(SpiHandler *handler) {
 	} else {
 		//8 bit data frame
 		handler->address->DR = *(handler->storage.tx_buffer);
-				handler->storage.tx_len--;
-				handler->storage.tx_buffer++;
+		handler->storage.tx_len--;
+		handler->storage.tx_buffer++;
 	}
-	if(!handler->storage.tx_len) {
+
+	// End SPI tx when length becomes 0
+	if (!handler->storage.tx_len) {
 		handler->address->CR2 &= ~(1 << SPI_CR2_TXEIE);
 		handler->storage.tx_buffer = NULL;
 		handler->storage.tx_len = 0;
 		handler->storage.tx_state = SPI_READY;
-		spi_application_event_callback(handler,SPI_EVENT_TX_CMPLT);
+		spi_application_event_callback(handler, SPI_EVENT_TX_CMPLT);
 	}
 }
-static void spi_rxne_interrupt_handle();
+static void spi_rxne_interrupt_handle() {
+	if (handler->address->CR1 & (1 << SPI_CR1_DFF)) {
+		*((uint16_t*) (handler->storage.rx_buffer)) = handler->address->DR;
+		handler->storage.rx_len -= 2;
+		(uint16_t*) (handler->storage.rx_buffer)++;
+	} else {
+		*(handler->storage.rx_buffer) = handler->address->DR;
+		handler->storage.rx_len--;
+		handler->storage.rx_buffer++;
+	}
+
+	// End SPI rx when length becomes 0
+	if (!handler->storage.rx_len) {
+		handler->address->CR2 &= ~(1 << SPI_CR2_RXNEIE);
+		handler->storage.rx_buffer = NULL;
+		handler->storage.rx_len = 0;
+		handler->storage.rx_state = SPI_READY;
+		spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
+	}
+}
 static void spi_ovr_err_interrupt_handle();
 
