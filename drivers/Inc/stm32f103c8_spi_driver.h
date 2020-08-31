@@ -8,6 +8,11 @@
 #define SPI_RXNE_FLAG (1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG (1 << SPI_SR_BSY)
 
+// SPI Application States
+#define SPI_READY 0
+#define SPI_BUSY_IN_RX 1
+#define SPI_BUSY_IN_TX 2
+
 typedef enum {
 	SLAVE = 0, MASTER = 1
 } SpiDeviceMode;
@@ -54,8 +59,18 @@ typedef struct {
 } SpiSettings;
 
 typedef struct {
+	uint8_t *tx_buffer;
+	uint8_t *rx_buffer;
+	uint32_t tx_len;
+	uint32_t rx_len;
+	uint8_t tx_state;
+	uint8_t rx_state;
+}SpiStorage;
+
+typedef struct {
 	SpiRegDef *address;
 	SpiSettings settings;
+	SpiStorage storage;
 } SpiHandler;
 
 //Peripheral Clock Setup
@@ -73,6 +88,10 @@ uint8_t spi_get_flag_status(SpiRegDef *address, uint32_t flag_name);
 // Data TX and RX
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len);
 void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len);
+
+// Data TX and RX with Interrupt
+uint8_t spi_tx_it(SpiHandler *handler, uint8_t *tx_buffer, uint32_t len);
+uint8_t spi_rx_it(SpiHandler *handler, uint8_t *rx_buffer, uint32_t len);
 
 // IRQ Handling
 void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di);

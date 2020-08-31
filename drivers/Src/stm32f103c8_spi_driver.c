@@ -62,17 +62,17 @@ void spi_peripheral_control(SpiRegDef *address, uint8_t en_or_di) {
 }
 void spi_ssi_config(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
-			address->CR1 |= (1 << SPI_CR1_SSI);
-		} else {
-			address->CR1 &= ~(1 << SPI_CR1_SSI);
-		}
+		address->CR1 |= (1 << SPI_CR1_SSI);
+	} else {
+		address->CR1 &= ~(1 << SPI_CR1_SSI);
+	}
 }
 void spi_ssoe_config(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
-			address->CR1 |= (1 << SPI_CR2_SSOE);
-		} else {
-			address->CR1 &= ~(1 << SPI_CR2_SSOE);
-		}
+		address->CR1 |= (1 << SPI_CR2_SSOE);
+	} else {
+		address->CR1 &= ~(1 << SPI_CR2_SSOE);
+	}
 }
 
 uint8_t spi_get_flag_status(SpiRegDef *address, uint32_t flag_name) {
@@ -106,23 +106,76 @@ void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len) {
 }
 void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len) {
 	while (len > 0) {
-			while (spi_get_flag_status(address, SPI_RXNE_FLAG) == FLAG_RESET);
-			// Check DFF bit in CR1
-			if (address->CR1 & (1 << SPI_CR1_DFF)) {
-				// 16 bit data frame
-				// Load data from data register to rx buffer
-				*((uint16_t*)rx_buffer) = address->DR;
-				len -= 2;
-				(uint16_t*) (rx_buffer)++;
-			} else {
-				//8 bit data frame
-				*(rx_buffer) = address->DR;
-				len--;
-				rx_buffer++;
-			}
+		while (spi_get_flag_status(address, SPI_RXNE_FLAG) == FLAG_RESET)
+			;
+		// Check DFF bit in CR1
+		if (address->CR1 & (1 << SPI_CR1_DFF)) {
+			// 16 bit data frame
+			// Load data from data register to rx buffer
+			*((uint16_t*) rx_buffer) = address->DR;
+			len -= 2;
+			(uint16_t*) (rx_buffer)++;
+		} else {
+			//8 bit data frame
+			*(rx_buffer) = address->DR;
+			len--;
+			rx_buffer++;
 		}
+	}
 }
 
-void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di);
-void spi_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority);
-void spi_irq_handling(SpiHandler *address);
+uint8_t spi_tx_it(SpiHandler *handler, uint8_t *tx_buffer, uint32_t len) {
+
+	uint8_t state = handler->storage.tx_state;
+	if (state != SPI_BUSY_IN_TX) {
+
+		// Save Tx buffer address and length
+		handler->storage.tx_buffer = tx_buffer;
+		handler->storage.tx_len = len;
+
+		// Mark SPI state as busy
+		handler->storage.tx_state = SPI_BUSY_IN_TX;
+
+		// Enable TXEIE control bit to enable interrupt whenever TXE flag is set in SR
+		handler->address->CR2 |= (1 << SPI_CR2_TXEIE);
+	}
+	return state;
+}
+
+uint8_t spi_rx_it(SpiHandler *handler, uint8_t *rx_buffer, uint32_t len) {
+	uint8_t state = handler->storage.rx_state;
+	if (state != SPI_BUSY_IN_RX) {
+
+		// Save rx buffer address and length
+		handler->storage.rx_buffer = rx_buffer;
+		handler->storage.rx_len = len;
+
+		// Mark SPI state as busy
+		handler->storage.rx_state = SPI_BUSY_IN_RX;
+
+		// Enable RXEIE control bit to enable interrupt whenever RXE flag is set in SR
+		handler->address->CR2 |= (1 << SPI_CR2_RXNEIE);
+	}
+	return state;
+}
+
+void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
+	uint8_t index = irq_number / 32;
+	uint8_t section = irq_number % 32;
+	if (en_or_di == ENABLE) {
+		*(NVIC_ISER_BASEADDR + index * 4) |= (1 << section);
+	} else {
+		*(NVIC_ICER_BASEADDR + index * 4) |= (1 << section);
+	}
+}
+
+void spi_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) {
+	// Find IPR register
+	uint8_t index = irq_number / 4;
+	uint8_t iprx_section = irq_number % 4;
+	uint8_t shift = ((8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED));
+	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << shift);
+}
+void spi_irq_handling(SpiHandler *address) {
+
+}
