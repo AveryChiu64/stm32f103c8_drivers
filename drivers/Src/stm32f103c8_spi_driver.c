@@ -104,7 +104,24 @@ void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len) {
 		}
 	}
 }
-void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len);
+void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len) {
+	while (len > 0) {
+			while (spi_get_flag_status(address, SPI_RXNE_FLAG) == FLAG_RESET);
+			// Check DFF bit in CR1
+			if (address->CR1 & (1 << SPI_CR1_DFF)) {
+				// 16 bit data frame
+				// Load data from data register to rx buffer
+				*((uint16_t*)rx_buffer) = address->DR;
+				len -= 2;
+				(uint16_t*) (rx_buffer)++;
+			} else {
+				//8 bit data frame
+				*(rx_buffer) = address->DR;
+				len--;
+				rx_buffer++;
+			}
+		}
+}
 
 void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di);
 void spi_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority);
