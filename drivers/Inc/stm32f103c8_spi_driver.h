@@ -64,6 +64,12 @@ void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di);
 //Initialization
 void spi_init(SpiHandler *handler);
 
+//Other peripheral control
+void spi_peripheral_control(SpiRegDef *address, uint8_t en_or_di);
+void spi_ssi_config(SpiRegDef *address, uint8_t en_or_di);
+void spi_ssoe_config(SpiRegDef *address, uint8_t en_or_di)
+uint8_t spi_get_flag_status(SpiRegDef *address, uint32_t flag_name);
+
 // Data TX and RX
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len);
 void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len);
