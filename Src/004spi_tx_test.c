@@ -1,6 +1,10 @@
 #include "stm32f103c8.h"
 #include <string.h>
 
+void delay(void) {
+	for (uint32_t i = 0; i < 50000; i++);
+}
+
 void spi1_gpio_init() {
 	gpio_peri_clock_ctrl(GPIOA,ENABLE);
 	GpioSettings gpio_settings = { .mode = OUTPUT_MODE_10MHZ, .type =
@@ -37,12 +41,23 @@ void spi1_init() {
 		char user_data[] = "Hello World";
 		spi1_gpio_init();
 		spi1_init();
-		spi_peripheral_control(SPI1, ENABLE);
 		spi_ssoe_config(SPI1, ENABLE);
-		spi_tx(SPI1,(uint8_t*)user_data,strlen(user_data));
-		spi_peripheral_control(SPI1, DISABLE);
-		while(1) {
+		uint8_t data_len = strlen(user_data);
 
+		// Send length of data for the Arduino Slave first
+		spi_peripheral_control(SPI1, ENABLE);
+		spi_tx(SPI1,&data_len,1);
+		while(spi_get_flag_status(SPI1, SPI_BUSY_FLAG));
+		spi_peripheral_control(SPI1, DISABLE);
+		delay();
+
+
+		while(1) {
+			spi_peripheral_control(SPI1, ENABLE);
+			spi_tx(SPI1,(uint8_t*)user_data,strlen(user_data));
+			while(spi_get_flag_status(SPI1, SPI_BUSY_FLAG));
+			spi_peripheral_control(SPI1, DISABLE);
+			delay();
 		}
 	}
 
