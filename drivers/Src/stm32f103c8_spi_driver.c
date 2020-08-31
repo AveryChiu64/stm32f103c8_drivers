@@ -1,8 +1,8 @@
 #include "stm32f103c8_spi_driver.h"
 
 static void spi_txe_interrupt_handle(SpiHandler *handler);
-static void spi_rxne_interrupt_handle();
-static void spi_ovr_err_interrupt_handle();
+static void spi_rxne_interrupt_handle(SpiHandler *handler);
+static void spi_ovr_err_interrupt_handle(SpiHandler *handler);
 
 void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
@@ -190,12 +190,12 @@ void spi_irq_handling(SpiHandler *handler) {
 	// Check for rx flag and mask
 	if ((handler->address->SR & (1 << SPI_SR_RXNE))
 			&& (handler->address->CR2 & (1 << SPI_CR2_RXNEIE))) {
-		spi_rxne_interrupt_handle();
+		spi_rxne_interrupt_handle(handler);
 	}
 	// Check for OVR flag
 	if ((handler->address->SR & (1 << SPI_SR_OVR))
 			&& (handler->address->CR2 & (1 << SPI_CR2_ERRIE))) {
-		spi_ovr_err_interrupt_handle();
+		spi_ovr_err_interrupt_handle(handler);
 	}
 }
 
@@ -221,7 +221,7 @@ static void spi_txe_interrupt_handle(SpiHandler *handler) {
 	}
 }
 
-static void spi_rxne_interrupt_handle() {
+static void spi_rxne_interrupt_handle(SpiHandler *handler) {
 	if (handler->address->CR1 & (1 << SPI_CR1_DFF)) {
 		*((uint16_t*) (handler->storage.rx_buffer)) = handler->address->DR;
 		handler->storage.rx_len -= 2;
@@ -240,13 +240,21 @@ static void spi_rxne_interrupt_handle() {
 }
 
 // Occurs when there is an overrun error
-static void spi_ovr_err_interrupt_handle() {
+static void spi_ovr_err_interrupt_handle(SpiHandler *handler) {
 	// Clear OVR Flag
 	if (handler->storage.tx_state != SPI_BUSY_IN_TX) {
-
+		spi_clear_ovr_flag(handler.address);
 	}
 	// Inform application
 	spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
+}
+
+void spi_clear_ovr_flag(SpiRegDef *address) {
+	//OVR flag is reset by reading DR and SR
+	uint8_t temp;
+	temp = address->DR;
+	temp = address->SR;
+	void(temp);
 }
 
 void spi_close_tx(SpiHandler *handler) {
@@ -261,4 +269,8 @@ void spi_close_rx(SpiHandler *handler) {
 	handler->storage.rx_len = 0;
 	handler->storage.rx_state = SPI_READY;
 	spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
+}
+
+__weak void spi_application_event_callback(SpiHandler *handler, uint8_t application_event) {
+	// User may override this function since it is weak
 }

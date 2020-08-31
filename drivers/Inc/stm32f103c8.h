@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #define __vo volatile
+#define __weak __attribute__((weak))
 
 // ARM Cortex M3 Processor NVIC Register Addresses
 #define NVIC_ISER_BASEADDR ((__vo uint32_t*)0XE000E100)

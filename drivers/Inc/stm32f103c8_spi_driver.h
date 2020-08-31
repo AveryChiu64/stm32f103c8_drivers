@@ -106,4 +106,7 @@ void spi_clear_ovr_flag(SpiRegDef *address);
 void spi_close_tx(SpiHandler *handler);
 void spi_close_rx(SpiHandler *handler);
 
+// Application Callback
+void spi_application_event_callback(SpiHandler *handler, uint8_t application_event);
+
 #endif /* INC_STM32F103C8_SPI_DRIVER_H_ */
