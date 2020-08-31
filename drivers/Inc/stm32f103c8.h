@@ -2,6 +2,7 @@
 #define INC_STM32F103C8_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #define __vo volatile
 
 // ARM Cortex M3 Processor NVIC Register Addresses

@@ -1,5 +1,9 @@
 #include "stm32f103c8_spi_driver.h"
 
+static void spi_txe_interrupt_handle(SpiHandler *handler);
+static void spi_rxne_interrupt_handle();
+static void spi_ovr_err_interrupt_handle();
+
 void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
 		if (address == SPI1) {
@@ -180,17 +184,43 @@ void spi_irq_handling(SpiHandler *handler) {
 	// Check for tx flag and mask
 	if ((handler->address->SR & (1 << SPI_SR_TXE))
 			&& (handler->address->CR2 & (1 << SPI_CR2_TXEIE))) {
-		//spi_txe_interrupt_handle();
+		spi_txe_interrupt_handle(handler);
 	}
 
 	// Check for rx flag and mask
 	if ((handler->address->SR & (1 << SPI_SR_RXNE))
 			&& (handler->address->CR2 & (1 << SPI_CR2_RXNEIE))) {
-		//spi_rxne_interrupt_handle();
+		spi_rxne_interrupt_handle();
 	}
 	// Check for OVR flag
 	if ((handler->address->SR & (1 << SPI_SR_OVR))
 			&& (handler->address->CR2 & (1 << SPI_CR2_ERRIE))) {
-		//spi_ovr_interrupt_handle();
+		spi_ovr_err_interrupt_handle();
 	}
 }
+
+// Helper Functions
+static void spi_txe_interrupt_handle(SpiHandler *handler) {
+	if (handler->address->CR1 & (1 << SPI_CR1_DFF)) {
+		// 16 bit data frame
+		// Load data into the data register
+		handler->address->DR = *((uint16_t*) (handler->storage.tx_buffer));
+		handler->storage.tx_len -= 2;
+		(uint16_t*) (handler->storage.tx_buffer)++;
+	} else {
+		//8 bit data frame
+		handler->address->DR = *(handler->storage.tx_buffer);
+				handler->storage.tx_len--;
+				handler->storage.tx_buffer++;
+	}
+	if(!handler->storage.tx_len) {
+		handler->address->CR2 &= ~(1 << SPI_CR2_TXEIE);
+		handler->storage.tx_buffer = NULL;
+		handler->storage.tx_len = 0;
+		handler->storage.tx_state = SPI_READY;
+		spi_application_event_callback(handler,SPI_EVENT_TX_CMPLT);
+	}
+}
+static void spi_rxne_interrupt_handle();
+static void spi_ovr_err_interrupt_handle();
+
