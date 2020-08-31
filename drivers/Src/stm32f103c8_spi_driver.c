@@ -216,13 +216,11 @@ static void spi_txe_interrupt_handle(SpiHandler *handler) {
 
 	// End SPI tx when length becomes 0
 	if (!handler->storage.tx_len) {
-		handler->address->CR2 &= ~(1 << SPI_CR2_TXEIE);
-		handler->storage.tx_buffer = NULL;
-		handler->storage.tx_len = 0;
-		handler->storage.tx_state = SPI_READY;
+		spi_close_tx(handler);
 		spi_application_event_callback(handler, SPI_EVENT_TX_CMPLT);
 	}
 }
+
 static void spi_rxne_interrupt_handle() {
 	if (handler->address->CR1 & (1 << SPI_CR1_DFF)) {
 		*((uint16_t*) (handler->storage.rx_buffer)) = handler->address->DR;
@@ -236,12 +234,31 @@ static void spi_rxne_interrupt_handle() {
 
 	// End SPI rx when length becomes 0
 	if (!handler->storage.rx_len) {
-		handler->address->CR2 &= ~(1 << SPI_CR2_RXNEIE);
-		handler->storage.rx_buffer = NULL;
-		handler->storage.rx_len = 0;
-		handler->storage.rx_state = SPI_READY;
+		spi_close_rx(handler);
 		spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
 	}
 }
-static void spi_ovr_err_interrupt_handle();
 
+// Occurs when there is an overrun error
+static void spi_ovr_err_interrupt_handle() {
+	// Clear OVR Flag
+	if (handler->storage.tx_state != SPI_BUSY_IN_TX) {
+
+	}
+	// Inform application
+	spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
+}
+
+void spi_close_tx(SpiHandler *handler) {
+	handler->address->CR2 &= ~(1 << SPI_CR2_TXEIE);
+	handler->storage.tx_buffer = NULL;
+	handler->storage.tx_len = 0;
+	handler->storage.tx_state = SPI_READY;
+}
+void spi_close_rx(SpiHandler *handler) {
+	handler->address->CR2 &= ~(1 << SPI_CR2_RXNEIE);
+	handler->storage.rx_buffer = NULL;
+	handler->storage.rx_len = 0;
+	handler->storage.rx_state = SPI_READY;
+	spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
+}
