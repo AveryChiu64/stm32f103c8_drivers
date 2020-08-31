@@ -129,7 +129,7 @@ uint8_t spi_tx_it(SpiHandler *handler, uint8_t *tx_buffer, uint32_t len) {
 	uint8_t state = handler->storage.tx_state;
 	if (state != SPI_BUSY_IN_TX) {
 
-		// Save Tx buffer address and length
+		// Save tx buffer address and length
 		handler->storage.tx_buffer = tx_buffer;
 		handler->storage.tx_len = len;
 
@@ -176,6 +176,21 @@ void spi_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) {
 	uint8_t shift = ((8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED));
 	*(NVIC_IPR_BASEADDR + (index * 4)) |= (irq_priority << shift);
 }
-void spi_irq_handling(SpiHandler *address) {
+void spi_irq_handling(SpiHandler *handler) {
+	// Check for tx flag and mask
+	if ((handler->address->SR & (1 << SPI_SR_TXE))
+			&& (handler->address->CR2 & (1 << SPI_CR2_TXEIE))) {
+		//spi_txe_interrupt_handle();
+	}
 
+	// Check for rx flag and mask
+	if ((handler->address->SR & (1 << SPI_SR_RXNE))
+			&& (handler->address->CR2 & (1 << SPI_CR2_RXNEIE))) {
+		//spi_rxne_interrupt_handle();
+	}
+	// Check for OVR flag
+	if ((handler->address->SR & (1 << SPI_SR_OVR))
+			&& (handler->address->CR2 & (1 << SPI_CR2_ERRIE))) {
+		//spi_ovr_interrupt_handle();
+	}
 }

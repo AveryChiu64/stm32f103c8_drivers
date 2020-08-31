@@ -96,6 +96,6 @@ uint8_t spi_rx_it(SpiHandler *handler, uint8_t *rx_buffer, uint32_t len);
 // IRQ Handling
 void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di);
 void spi_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority);
-void spi_irq_handling(SpiHandler *address);
+void spi_irq_handling(SpiHandler *handler);
 
 #endif /* INC_STM32F103C8_SPI_DRIVER_H_ */
