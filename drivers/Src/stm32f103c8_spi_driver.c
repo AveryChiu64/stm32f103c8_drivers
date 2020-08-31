@@ -1,9 +1,20 @@
 #include "stm32f103c8_spi_driver.h"
 
+// Private Function Prototypes
 static void spi_txe_interrupt_handle(SpiHandler *handler);
 static void spi_rxne_interrupt_handle(SpiHandler *handler);
 static void spi_ovr_err_interrupt_handle(SpiHandler *handler);
 
+/*******************************************************************
+ * NAME : spi_peri_clock_ctrl
+ *
+ * DESCRIPTION : Enables/disables peripheral clock for SPI
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		en_or_di		Enable or disable
+ *
+ * OUTPUTS : 	void
+ */
 void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
 		if (address == SPI1) {
@@ -24,6 +35,15 @@ void spi_peri_clock_ctrl(SpiRegDef *address, uint8_t en_or_di) {
 	}
 }
 
+/*******************************************************************
+ * NAME : spi_init
+ *
+ * DESCRIPTION : Enables/disables peripheral clock for SPI
+ *
+ * PARAMETERS:	SpiHandler 		*handler		Holds the address, settings, and storage for SPI
+ *
+ * OUTPUTS : 	void
+ */
 void spi_init(SpiHandler *handler) {
 
 	// Configure device mode
@@ -57,6 +77,16 @@ void spi_init(SpiHandler *handler) {
 	handler->address->CR1 |= ((handler->settings.br) << SPI_CR1_BR1);
 }
 
+/*******************************************************************
+ * NAME : spi_peripheral_control
+ *
+ * DESCRIPTION : Enables/disables a SPI
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		en_or_di		Enable or disable
+ *
+ * OUTPUTS : 	void
+ */
 void spi_peripheral_control(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
 		address->CR1 |= (1 << SPI_CR1_SPE);
@@ -64,6 +94,17 @@ void spi_peripheral_control(SpiRegDef *address, uint8_t en_or_di) {
 		address->CR1 &= ~(1 << SPI_CR1_SPE);
 	}
 }
+
+/*******************************************************************
+ * NAME : spi_ssi_config
+ *
+ * DESCRIPTION : Enables/disables the internal slave select
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		en_or_di		Enable or disable
+ *
+ * OUTPUTS : 	void
+ */
 void spi_ssi_config(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
 		address->CR1 |= (1 << SPI_CR1_SSI);
@@ -71,6 +112,18 @@ void spi_ssi_config(SpiRegDef *address, uint8_t en_or_di) {
 		address->CR1 &= ~(1 << SPI_CR1_SSI);
 	}
 }
+
+/*******************************************************************
+ * NAME : spi_ssi_config
+ *
+ * DESCRIPTION : Enables/disables the the slave select output. This should only
+ * 				 be disabled when dealing with a multimaster configuration.
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		en_or_di		Enable or disable
+ *
+ * OUTPUTS : 	void
+ */
 void spi_ssoe_config(SpiRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
 		address->CR1 |= (1 << SPI_CR2_SSOE);
@@ -79,6 +132,16 @@ void spi_ssoe_config(SpiRegDef *address, uint8_t en_or_di) {
 	}
 }
 
+/*******************************************************************
+ * NAME : spi_get_flag_status
+ *
+ * DESCRIPTION : Gets the status of the flag from the status register for SPI
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint32_t 		flag_name		The name of the flag
+ *
+ * OUTPUTS : 	uint8_t			Either FLAT_SET or FLAG_RESET macros
+ */
 uint8_t spi_get_flag_status(SpiRegDef *address, uint32_t flag_name) {
 	if (address->SR & flag_name) {
 		return FLAG_SET;
@@ -86,6 +149,17 @@ uint8_t spi_get_flag_status(SpiRegDef *address, uint32_t flag_name) {
 	return FLAG_RESET;
 }
 
+/*******************************************************************
+ * NAME : spi_tx
+ *
+ * DESCRIPTION : Sends data with SPI
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		*tx_buffer		tx buffer to temporarily store the data to send
+ * 				uint32_t		len				The length of the tx_buffer data
+ *
+ * OUTPUTS : 	void
+ */
 void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len) {
 	while (len > 0) {
 		// Wait until TXE is set
@@ -108,6 +182,18 @@ void spi_tx(SpiRegDef *address, uint8_t *tx_buffer, uint32_t len) {
 		}
 	}
 }
+
+/*******************************************************************
+ * NAME : spi_tx
+ *
+ * DESCRIPTION : Sends data with SPI
+ *
+ * PARAMETERS:	SpiRegDef 		*address		Address of the SPI peripheral
+ * 				uint8_t 		*rx_buffer		rx buffer to temporarily store the data received
+ * 				uint32_t		len				The length of the rx_buffer data
+ *
+ * OUTPUTS : 	void
+ */
 void spi_rx(SpiRegDef *address, uint8_t *rx_buffer, uint32_t len) {
 	while (len > 0) {
 		while (spi_get_flag_status(address, SPI_RXNE_FLAG) == FLAG_RESET)
@@ -243,7 +329,7 @@ static void spi_rxne_interrupt_handle(SpiHandler *handler) {
 static void spi_ovr_err_interrupt_handle(SpiHandler *handler) {
 	// Clear OVR Flag
 	if (handler->storage.tx_state != SPI_BUSY_IN_TX) {
-		spi_clear_ovr_flag(handler.address);
+		spi_clear_ovr_flag(handler->address);
 	}
 	// Inform application
 	spi_application_event_callback(handler, SPI_EVENT_RX_CMPLT);
@@ -254,7 +340,7 @@ void spi_clear_ovr_flag(SpiRegDef *address) {
 	uint8_t temp;
 	temp = address->DR;
 	temp = address->SR;
-	void(temp);
+	(void)temp;
 }
 
 void spi_close_tx(SpiHandler *handler) {
