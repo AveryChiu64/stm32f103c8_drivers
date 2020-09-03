@@ -108,7 +108,7 @@ typedef struct {
 	__vo uint32_t SR2;
 	__vo uint32_t CCR; // clock control register
 	__vo uint32_t TRISE; // TRISE register
-}I2cRegDef;
+}I2CRegDef;
 
 typedef struct {
 	__vo uint32_t IMR; // Interrupt mask register
@@ -175,7 +175,7 @@ typedef enum {
  I2C_CR1_PEC,
  I2C_CR1_ALERT,
  I2C_CR1_SWRST = 15
-}I2cControlRegister1;
+}I2CControlRegister1;
 
 typedef enum {
 	I2C_CR2_FREQ0=0,
@@ -189,7 +189,7 @@ typedef enum {
 	I2C_CR2_ITBUFEN,
 	I2C_CR2_DMAEN,
 	I2C_CR2_LAST
-}I2cControlRegister2;
+}I2CControlRegister2;
 
 typedef enum {
 	I2C_SR1_SB = 0,
@@ -206,7 +206,7 @@ typedef enum {
 	I2C_SR1_PEC_ERR,
 	I2C_SR1_TIMEOUT = 14,
 	I2C_SR1_SMB_ALERT
-}I2cStatusRegister1;
+}I2CStatusRegister1;
 
 typedef enum {
 	I2C_SR2_MSL = 0,
@@ -224,7 +224,7 @@ typedef enum {
 	I2C_SR2_PEC5,
 	I2C_SR2_PEC6,
 	I2C_SR2_PEC7
-}I2cStatusRegister2;
+}I2CStatusRegister2;
 
 typedef enum {
 	I2C_CCR0 = 0,
@@ -241,7 +241,7 @@ typedef enum {
 	I2C_CCR11,
 	I2C_CCR_DUTY = 14,
 	I2C_CCR_FS
-}I2cClockControlRegister;
+}I2CClockControlRegister;
 
 // Peripheral Definitions
 #define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
@@ -256,8 +256,8 @@ typedef enum {
 #define SPI2 ((SpiRegDef*)SPI2_BASEADDR)
 #define SPI3 ((SpiRegDef*)SPI3_BASEADDR)
 
-#define I2C1 ((I2cRegDef*)I2C1_BASEADDR)
-#define I2C2 ((I2cRegDef*)I2C2_BASEADDR)
+#define I2C1 ((I2CRegDef*)I2C1_BASEADDR)
+#define I2C2 ((I2CRegDef*)I2C2_BASEADDR)
 
 #define RCC ((RccRegDef*)RCC_BASEADDR)
 #define AFIO ((AfioRegDef*)AFIO_BASEADDR)
@@ -380,5 +380,6 @@ typedef enum {
 // Drivers
 #include "stm32f103c8_gpio_driver.h"
 #include "stm32f103c8_spi_driver.h"
+#include "stm32f103c8_i2c_driver.h"
 
 #endif /* INC_STM32F103C8_H_ */
