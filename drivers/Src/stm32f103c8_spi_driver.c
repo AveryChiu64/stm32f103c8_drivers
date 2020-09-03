@@ -272,7 +272,7 @@ uint8_t spi_rx_it(SpiHandler *handler, uint8_t *rx_buffer, uint32_t len) {
 }
 
 /*******************************************************************
- * NAME : spi_irq__interrupt_config
+ * NAME : spi_irq_interrupt_config
  *
  * DESCRIPTION : Enables/disables peripheral clock for SPI
  *
@@ -281,7 +281,7 @@ uint8_t spi_rx_it(SpiHandler *handler, uint8_t *rx_buffer, uint32_t len) {
  *
  * OUTPUTS : 	void
  */
-void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
+void spi_irq_interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
 	uint8_t index = irq_number / 32;
 	uint8_t section = irq_number % 32;
 	if (en_or_di == ENABLE) {
@@ -292,7 +292,7 @@ void spi_irq__interrupt_config(uint8_t irq_number, uint8_t en_or_di) {
 }
 
 /*******************************************************************
- * NAME : spi_irq__interrupt_config
+ * NAME : spi_irq_priority_config
  *
  * DESCRIPTION : Enables/disables peripheral clock for SPI
  *

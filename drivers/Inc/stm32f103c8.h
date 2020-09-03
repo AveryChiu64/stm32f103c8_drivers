@@ -99,6 +99,18 @@ typedef struct {
 }SpiRegDef;
 
 typedef struct {
+	__vo uint32_t CR1; // control registers
+	__vo uint32_t CR2;
+	__vo uint32_t OAR1; // own address registers
+	__vo uint32_t OAR2;
+	__vo uint32_t DR; // data register
+	__vo uint32_t SR1; // status register
+	__vo uint32_t SR2;
+	__vo uint32_t CCR; // clock control register
+	__vo uint32_t TRISE; // TRISE register
+}I2cRegDef;
+
+typedef struct {
 	__vo uint32_t IMR; // Interrupt mask register
 	__vo uint32_t EMR; // Event mask register
 	__vo uint32_t RTSR; // Rising trigger selection register
@@ -147,6 +159,89 @@ typedef enum {
 	SPI_SR_BSY,
 }SpiStatusRegister;
 
+// Bit position definitions for I2C registers
+typedef enum {
+ I2C_CR1_PE = 0,
+ I2C_CR1_SMBUS,
+ I2C_CR1_SMB_TYPE = 3,
+ I2C_CR1_ENARP,
+ I2C_CR1_ENPEC,
+ I2C_CR1_ENGC,
+ I2C_CR1_NO_STRETCH,
+ I2C_CR1_START,
+ I2C_CR1_STOP,
+ I2C_CR1_ACK,
+ I2C_CR1_POS,
+ I2C_CR1_PEC,
+ I2C_CR1_ALERT,
+ I2C_CR1_SWRST = 15
+}I2cControlRegister1;
+
+typedef enum {
+	I2C_CR2_FREQ0=0,
+	I2C_CR2_FREQ1,
+	I2C_CR2_FREQ2,
+	I2C_CR2_FREQ3,
+	I2C_CR2_FREQ4,
+	I2C_CR2_FREQ5,
+	I2C_CR2_ITERREN = 8,
+	I2C_CR2_ITEVTEN,
+	I2C_CR2_ITBUFEN,
+	I2C_CR2_DMAEN,
+	I2C_CR2_LAST
+}I2cControlRegister2;
+
+typedef enum {
+	I2C_SR1_SB = 0,
+	I2C_SR1_ADDR,
+	I2C_SR1_BTF,
+	I2C_SR1_ADD10,
+	I2C_SR1_STOPF,
+	I2C_SR1_RXNE = 6,
+	I2C_SR1_TXE,
+	I2C_SR1_BERR,
+	I2C_SR1_ARLO,
+	I2C_SR1_AF,
+	I2C_SR1_OVR,
+	I2C_SR1_PEC_ERR,
+	I2C_SR1_TIMEOUT = 14,
+	I2C_SR1_SMB_ALERT
+}I2cStatusRegister1;
+
+typedef enum {
+	I2C_SR2_MSL = 0,
+	I2C_SR2_BUSY,
+	I2C_SR2_TRA,
+	I2C_SR2_GEN_CALL = 4,
+	I2C_SR2_SMBDE_FAULT,
+	I2C_SR2_SMB_HOST,
+	I2C_SR2_DUALF,
+	I2C_SR2_PEC0,
+	I2C_SR2_PEC1,
+	I2C_SR2_PEC2,
+	I2C_SR2_PEC3,
+	I2C_SR2_PEC4,
+	I2C_SR2_PEC5,
+	I2C_SR2_PEC6,
+	I2C_SR2_PEC7
+}I2cStatusRegister2;
+
+typedef enum {
+	I2C_CCR0 = 0,
+	I2C_CCR1,
+	I2C_CCR2,
+	I2C_CCR3,
+	I2C_CCR4,
+	I2C_CCR5,
+	I2C_CCR6,
+	I2C_CCR7,
+	I2C_CCR8,
+	I2C_CCR9,
+	I2C_CCR10,
+	I2C_CCR11,
+	I2C_CCR_DUTY = 14,
+	I2C_CCR_FS
+}I2cClockControlRegister;
 
 // Peripheral Definitions
 #define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
@@ -160,6 +255,9 @@ typedef enum {
 #define SPI1 ((SpiRegDef*)SPI1_BASEADDR)
 #define SPI2 ((SpiRegDef*)SPI2_BASEADDR)
 #define SPI3 ((SpiRegDef*)SPI3_BASEADDR)
+
+#define I2C1 ((I2cRegDef*)I2C1_BASEADDR)
+#define I2C2 ((I2cRegDef*)I2C2_BASEADDR)
 
 #define RCC ((RccRegDef*)RCC_BASEADDR)
 #define AFIO ((AfioRegDef*)AFIO_BASEADDR)
