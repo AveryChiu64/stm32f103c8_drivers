@@ -1,6 +1,20 @@
 #include "stm32f103c8_i2c_driver.h"
 
-void i2c_peri_clock_ctrl(I2CRegDef *address, uint8_t en_or_di);
+void i2c_peri_clock_ctrl(I2CRegDef *address, uint8_t en_or_di) {
+	if (en_or_di == ENABLE) {
+		if (address == I2C1) {
+			I2C1_PCLK_EN();
+		} else if (address == I2C2) {
+			I2C2_PCLK_EN();
+		}
+	} else {
+		if (address == I2C1) {
+			I2C1_PCLK_DI();
+		} else if (address == I2C2) {
+			I2C2_PCLK_DI();
+		}
+	}
+}
 void i2c_init(I2CHandler *handler);
 void i2c_peripheral_control(I2CRegDef *address, uint8_t en_or_di);
 uint8_t i2c_get_flag_status(I2CRegDef *address, uint32_t flag_name);
@@ -23,6 +37,7 @@ void i2c_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority) {
 
 }
 
-__weak void i2c_application_event_callback(I2CHandler *handler,uint8_t application_event) {
+__weak void i2c_application_event_callback(I2CHandler *handler,
+		uint8_t application_event) {
 
 }
