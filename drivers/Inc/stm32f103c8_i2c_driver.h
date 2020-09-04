@@ -3,6 +3,19 @@
 
 #include "stm32f103c8.h"
 
+// Flags
+#define I2C_SB_FLAG (1 << I2C_SR1_SB)
+#define I2C_ADDR_FLAG (1 << I2C_SR1_ADDR)
+#define I2C_BTF_FLAG (1 << I2C_SR1_BTF)
+#define I2C_STOPF_FLAG (1 << I2C_SR1_STOPF)
+#define I2C_RXNE_FLAG (1 << I2C_SR1_RXNE)
+#define I2C_TXE_FLAG (1 << I2C_SR1_TXE)
+#define I2C_BERR_FLAG (1 << I2C_SR1_BERR)
+#define I2C_ARLO_FLAG (1 << I2C_SR1_ARLO)
+#define I2C_AF_FLAG (1 << I2C_SR1_AF)
+#define I2C_OVR_FLAG (1 << I2C_SR1_OVR)
+#define I2C_TIMEOUT_FLAG (1 << I2C_SR1_TIMEOUT)
+
 // I2C scl speeds
 #define I2C_SCL_SPEED_SM 	100000
 #define I2C_SCL_SPEED_FM4K 	400000
@@ -33,6 +46,10 @@ void i2c_peri_clock_ctrl(I2CRegDef *address, uint8_t en_or_di);
 
 //Initialization
 void i2c_init(I2CHandler *handler);
+
+// Tx and Rx
+void i2c_master_tx(I2CHandler *handler, uint8_t *tx_buffer, uint32_t len,
+		uint8_t slave_address);
 
 //Other peripheral control
 void i2c_peripheral_control(I2CRegDef *address, uint8_t en_or_di);
