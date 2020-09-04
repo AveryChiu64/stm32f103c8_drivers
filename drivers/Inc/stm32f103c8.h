@@ -119,6 +119,21 @@ typedef struct {
 	__vo uint32_t PR; // Pending register
 } ExtiRegDef;
 
+// Bit position definition for RCC registers
+typedef enum {
+	RCC_CFGR_SW = 0,
+	RCC_CFGR_SWS = 2,
+	RCC_CFGR_HPRE = 4,
+	RCC_CFGR_PPRE1 = 8,
+	RCC_CFGR_PPRE2 = 11,
+	RCC_CFGR_ADC_PRE = 14,
+	RCC_CFGR_PLL_SRC = 16,
+	RCC_CFGR_PLL_XTPRE,
+	RCC_CFGR_PLLMUL,
+	RCC_CFGR_OTGFS_PRE = 22,
+	RCC_CFGR_MCO = 24,
+}RccCfgr;
+
 // Bit position definitions for SPI registers
 typedef enum {
 	SPI_CR1_CPHA = 0,
