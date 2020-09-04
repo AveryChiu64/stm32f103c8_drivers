@@ -1,7 +1,5 @@
 #include "stm32f103c8_i2c_driver.h"
-
-uint16_t ahb_prescaler[8] = { 2, 4, 8, 16, 32, 64, 128, 256 };
-uint16_t apb1_prescaler[4] = { 2, 4, 8, 16 };
+#include "stm32f103c8_rcc_driver.h"
 
 void i2c_peri_clock_ctrl(I2CRegDef *address, uint8_t en_or_di) {
 	if (en_or_di == ENABLE) {
@@ -19,46 +17,36 @@ void i2c_peri_clock_ctrl(I2CRegDef *address, uint8_t en_or_di) {
 	}
 }
 
-uint32_t rcc_get_pclk1_value() {
-	uint8_t hpre, ppre, ahb, apb1;
-	uint32_t sysclk;
-
-	uint8_t clksrc = ((RCC->CFGR >> 2) & 0x3);
-
-	// HSI
-	if (clksrc == 0) {
-		sysclk = 1600000;
-	}
-	// HSE
-	else if (clksrc == 1) {
-		sysclk = 800000;
-	}
-	// AHB
-	hpre = ((RCC->CFGR >> RCC_CFGR_HPRE) & 0xF);
-	if (hpre < 8) {
-		ahb = 1;
-	} else {
-		ahb = ahb_prescaler[hpre - 8];
-	}
-
-	// APB1
-	ppre = ((RCC->CFGR >> RCC_CFGR_PPRE1) & 0xF);
-	if (ppre < 4) {
-		apb1 = 1;
-	} else {
-		apb1 = apb1_prescaler[ppre - 4];
-	}
-	return (sysclk / ahb) / apb1;
-}
-
 void i2c_init(I2CHandler *handler) {
-	// Configure mode
 
-	// Configure speed
-	// Configure device address
 	// Configure Ack
 	handler->address->CR1 |= ((handler->settings.ack) << I2C_CR1_ACK);
-	// Configure rise time
+
+	// Configure FREQ
+	handler->address->CR2 |= (rcc_get_pclk1_value() & 0x3F);
+
+	// Configure device address (we only use 7 bit)
+	handler->address->OAR1 |= (handler->settings.device_address << 1);
+
+	// CCR calculations (speed)
+	uint16_t ccr_value = 0;
+	if (handler->settings.scl_speed <= I2C_SCL_SPEED_SM) {
+		// Standard
+		ccr_value = rcc_get_pclk1_value() / (2 * handler->settings.scl_speed);
+	} else {
+		// Fast
+		handler->address->CCR |= (1 << I2C_CCR_DUTY);
+		handler->address->CCR |= (handler->settings.duty_cycle << I2C_CCR_FS);
+		if (handler->settings.duty_cycle == FM_DUTY_2) {
+			ccr_value = rcc_get_pclk1_value()
+					/ (3 * handler->settings.scl_speed);
+		} else {
+			ccr_value = rcc_get_pclk1_value()
+					/ (25 * handler->settings.scl_speed);
+		}
+	}
+	handler->address->CCR |= ccr_value & 0xFFF;
+
 }
 void i2c_peripheral_control(I2CRegDef *address, uint8_t en_or_di);
 uint8_t i2c_get_flag_status(I2CRegDef *address, uint32_t flag_name);
