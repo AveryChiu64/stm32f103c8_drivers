@@ -50,6 +50,8 @@ void i2c_init(I2CHandler *handler);
 // Tx and Rx
 void i2c_master_tx(I2CHandler *handler, uint8_t *tx_buffer, uint32_t len,
 		uint8_t slave_address);
+void i2c_master_rx(I2CHandler *handler, uint8_t *tx_buffer, uint32_t len,
+		uint8_t slave_address);
 
 //Other peripheral control
 void i2c_peripheral_control(I2CRegDef *address, uint8_t en_or_di);
