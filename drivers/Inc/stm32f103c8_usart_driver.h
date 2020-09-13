@@ -61,5 +61,29 @@ typedef struct {
 	UsartSettings settings;
 }UsartHandler;
 
+void usart_peri_clock_ctrl(UsartRegDef *address, uint8_t en_or_di);
+
+// Init and De-init
+void usart_init(UsartHandler *handler);
+void usart_deinit(UsartRegDef *address);
+
+// Data Send and Receive
+void usart_tx(UsartRegDef *address,uint8_t *tx_buffer, uint32_t len);
+void usrat_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
+uint8_t usart_tx_it(UsartHandler *handler,uint8_t *tx_buffer, uint32_t len);
+uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
+
+// IRQ Handling
+void usart_irq_interrupt_config(uint8_t irq_number, uint8_t en_or_di);
+void usart_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority);
+void usart_irq_handling(UsartHandler *handler);
+
+// Other Peripheral Control APIs
+void usart_peripheral_control(UsartRegDef *address, uint8_t en_or_di);
+uint8_t usart_get_flag_status(UsartRegDef *address , uint32_t flag_name);
+void usart_clear_flag(UsartRegDef *address, uint16_t status_flag_name);
+
+// Application callback
+void usart_application_event_callback(UsartHandler *handler,uint8_t app_event);
 
 #endif /* INC_STM32F103C8_USART_DRIVER_H_ */
