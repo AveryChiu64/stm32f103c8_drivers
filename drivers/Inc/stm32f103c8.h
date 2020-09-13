@@ -268,6 +268,68 @@ typedef enum {
 	I2C_CCR_FS
 }I2CClockControlRegister;
 
+// Bit position definitions for USART registers
+typedef enum {
+	USART_PE = 0,
+	USART_FE,
+	USART_NE,
+	USART_ORE,
+	USART_IDLE,
+	USART_RXNE,
+	USART_TC,
+	USART_TXE,
+	USART_LBD,
+	USART_CTS
+}UsartStatusRegister;
+
+typedef enum {
+	USART_SBK = 0,
+	USART_RWU,
+	USART_RE,
+	USART_TE,
+	USART_IDLEIE,
+	USART_RXNEIE,
+	USART_TCIE,
+	USART_TXEIE,
+	USART_PEIE,
+	USART_PS,
+	USART_PCE,
+	USART_WAKE,
+	USART_M,
+	USART_UE,
+}UsartControlRegister1;
+
+typedef enum {
+	USART_ADD = 0,
+	USART_LBDL = 5,
+	USART_LBDIE,
+	USART_LBCL = 8,
+	USART_CPHA,
+	USART_CPOL,
+	USART_CLK_EN,
+	USART_STOP,
+	USART_LINEN = 14,
+}UsartControlRegister2;
+
+typedef enum {
+	USART_EIE = 0,
+	USART_IREN,
+	USART_IRLP,
+	USART_HDSEL,
+	USART_NACK,
+	USART_SCEN,
+	USART_DMAR,
+	USART_DMAT,
+	USART_RTSE,
+	USART_CTSE,
+	USART_CTSIE,
+}UsartControlRegister3;
+
+typedef enum {
+	USART_PSC = 0,
+	USART_GT = 8,
+}UsartGuardTimeAndPrescalarRegister;
+
 // Peripheral Definitions
 #define GPIOA ((GpioRegDef*)GPIOA_BASEADDR)
 #define GPIOB ((GpioRegDef*)GPIOB_BASEADDR)
