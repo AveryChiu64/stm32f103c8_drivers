@@ -99,16 +99,26 @@ typedef struct {
 }SpiRegDef;
 
 typedef struct {
-	__vo uint32_t CR1; // control registers
+	__vo uint32_t CR1; // Control registers
 	__vo uint32_t CR2;
 	__vo uint32_t OAR1; // own address registers
 	__vo uint32_t OAR2;
-	__vo uint32_t DR; // data register
-	__vo uint32_t SR1; // status register
+	__vo uint32_t DR; // Data register
+	__vo uint32_t SR1; // Status register
 	__vo uint32_t SR2;
-	__vo uint32_t CCR; // clock control register
+	__vo uint32_t CCR; // Clock control register
 	__vo uint32_t TRISE; // TRISE register
 }I2CRegDef;
+
+typedef struct {
+	__vo uint32_t SR; // Status register
+	__vo uint32_t DR; // Data register
+	__vo uint32_t BRR; // Baud rate register
+	__vo uint32_t CR1; // Control registers
+	__vo uint32_t CR2;
+	__vo uint32_t CR3;
+	__vo uint32_t GTPR; // Guard time and prescalar register
+}UsartRegDef;
 
 typedef struct {
 	__vo uint32_t IMR; // Interrupt mask register
@@ -274,6 +284,12 @@ typedef enum {
 #define I2C1 ((I2CRegDef*)I2C1_BASEADDR)
 #define I2C2 ((I2CRegDef*)I2C2_BASEADDR)
 
+#define USART1 ((UsartRegDef*)USART1_BASEADDR)
+#define USART2 ((UsartRegDef*)USART2_BASEADDR)
+#define USART3 ((UsartRegDef*)USART3_BASEADDR)
+#define UART4 ((UsartRegDef*)UART4_BASEADDR)
+#define UART5 ((UsartRegDef*)UART5_BASEADDR)
+
 #define RCC ((RccRegDef*)RCC_BASEADDR)
 #define AFIO ((AfioRegDef*)AFIO_BASEADDR)
 #define EXTI ((ExtiRegDef*)EXTI_BASEADDR)
@@ -303,8 +319,8 @@ typedef enum {
 #define USART1_PCLK_EN() (RCC->APB2ENR |= (1 << 14))
 #define USART2_PCLK_EN() (RCC->APB1ENR |= (1 << 17))
 #define USART3_PCLK_EN() (RCC->APB1ENR |= (1 << 18))
-#define USART4_PCLK_EN() (RCC->APB1ENR |= (1 << 19))
-#define USART5_PCLK_EN() (RCC->APB1ENR |= (1 << 20))
+#define UART4_PCLK_EN() (RCC->APB1ENR |= (1 << 19))
+#define UART5_PCLK_EN() (RCC->APB1ENR |= (1 << 20))
 
 // Clock Enable Macro for AFIO
 #define AFIO_PCLK_DI() (RCC->APB2ENR &= ~(1 << 0))
@@ -331,8 +347,8 @@ typedef enum {
 #define USART1_PCLK_DI() (RCC->APB2ENR &= ~(1 << 14))
 #define USART2_PCLK_DI() (RCC->APB1ENR &= ~(1 << 17))
 #define USART3_PCLK_DI() (RCC->APB1ENR &= ~(1 << 18))
-#define USART4_PCLK_DI() (RCC->APB1ENR &= ~(1 << 19))
-#define USART5_PCLK_DI() (RCC->APB1ENR &= ~(1 << 20))
+#define UART4_PCLK_DI() (RCC->APB1ENR &= ~(1 << 19))
+#define UART5_PCLK_DI() (RCC->APB1ENR &= ~(1 << 20))
 
 // Macros for resetting GPIOx Peripherals
 #define GPIOA_REG_RESET() do{ (RCC->APB2RSTR |= (1 << 2)); (RCC->APB2RSTR &= ~(1 << 2)); } while(0)
