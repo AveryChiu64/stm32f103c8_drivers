@@ -55,17 +55,57 @@ void usart_init(UsartHandler *handler) {
 }
 
 // Data Send and Receive
-void usart_tx(UsartRegDef *address, uint8_t *tx_buffer, uint32_t len) {
+void usart_tx(UsartHandler *handler, uint8_t *tx_buffer, uint32_t len) {
 	for (uint32_t i = 0; i < len; i++) {
 		// TXE Flag
-		while (!usart_get_flag_status(address, USART_TXE_FLAG));
-		address->DR = *tx_buffer;
-		tx_buffer++;
+		while (!usart_get_flag_status(handler->address, USART_TXE_FLAG))
+			;
+		if (handler->settings.word_length == USART_WORDLEN_9BITS) {
+			handler->address->DR = (*((uint16_t*) (tx_buffer))
+					& (uint16_t) 0x01FF);
+			//check for USART_ParityControl
+			if (handler->settings.parity == USART_PARITY_DISABLE) {
+				//No parity is used in this transfer , so 9bits of user data will be sent
+				tx_buffer += 2;
+			} else {
+				tx_buffer++;
+			}
+		} else {
+			handler->address->DR = (*tx_buffer & (uint8_t) 0xFF);
+			tx_buffer++;
+		}
 		// TC flag
-		while (!usart_get_flag_status(address, USART_TC_FLAG));
+		while (!usart_get_flag_status(handler->address, USART_TC_FLAG))
+			;
 	}
 }
-void usart_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
+void usart_rx(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len) {
+	for (uint32_t i = 0; i < len; i++) {
+		// TXE Flag
+		while (!usart_get_flag_status(handler->address, USART_RXNE_FLAG))
+			;
+		if (handler->settings.word_length == USART_WORDLEN_9BITS) {
+			handler->address->DR = (*((uint16_t*) (rx_buffer))
+					& (uint16_t) 0x01FF);
+			//check for USART_ParityControl
+			if (handler->settings.parity == USART_PARITY_DISABLE) {
+				*((uint16_t*) rx_buffer) = (handler->address->DR
+						& (uint16_t) 0x01FF);
+				rx_buffer += 2;
+			} else {
+				*rx_buffer = (handler->address->DR & (uint16_t) 0xFF);
+				rx_buffer++;
+			}
+		} else {
+			if (handler->settings.parity == USART_PARITY_DISABLE) {
+				*rx_buffer = (uint8_t) (handler->address->DR & (uint8_t) 0xFF);
+			} else {
+				*rx_buffer = (uint8_t) (handler->address->DR & (uint8_t) 0x7F);
+			}
+			rx_buffer++;
+		}
+	}
+}
 uint8_t usart_tx_it(UsartHandler *handler, uint8_t *tx_buffer, uint32_t len);
 uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
 

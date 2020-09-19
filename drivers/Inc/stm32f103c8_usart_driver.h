@@ -80,8 +80,8 @@ void usart_init(UsartHandler *handler);
 void usart_deinit(UsartRegDef *address);
 
 // Data Send and Receive
-void usart_tx(UsartRegDef *address,uint8_t *tx_buffer, uint32_t len);
-void usart_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
+void usart_tx(UsartHandler *handler,uint8_t *tx_buffer, uint32_t len);
+void usart_rx(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
 uint8_t usart_tx_it(UsartHandler *handler,uint8_t *tx_buffer, uint32_t len);
 uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
 
