@@ -45,7 +45,7 @@ void usart_init(UsartHandler *handler) {
 		}
 	}
 	// word length
-	address->address->CR1 |= (handler->settings.word_length << USART_M);
+	handler->address->CR1 |= (handler->settings.word_length << USART_M);
 
 	// stop bits
 	handler->address->CR2 |= (handler->settings.stop_bits << USART_STOP);
@@ -58,14 +58,14 @@ void usart_init(UsartHandler *handler) {
 void usart_tx(UsartRegDef *address, uint8_t *tx_buffer, uint32_t len) {
 	for (uint32_t i = 0; i < len; i++) {
 		// TXE Flag
-		while(!usart_get_flag_status(handler->address,FLAG));
-		handler->address->DR =
+		while (!usart_get_flag_status(address, USART_TXE_FLAG));
+		address->DR = *tx_buffer;
 		tx_buffer++;
 		// TC flag
-		while(!usart_get_flag_status(handler->address,FLAG));
+		while (!usart_get_flag_status(address, USART_TC_FLAG));
 	}
 }
-void usrat_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
+void usart_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
 uint8_t usart_tx_it(UsartHandler *handler, uint8_t *tx_buffer, uint32_t len);
 uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
 
@@ -98,6 +98,12 @@ void usart_peripheral_control(UsartRegDef *address, uint8_t en_or_di) {
 	}
 }
 
-uint8_t usart_get_flag_status(UsartRegDef *address, uint32_t flag_name);
+uint8_t usart_get_flag_status(UsartRegDef *address, uint32_t flag_name) {
+	if (address->SR & flag_name) {
+		return FLAG_SET;
+	}
+	return FLAG_RESET;
+}
+
 void usart_clear_flag(UsartRegDef *address, uint16_t status_flag_name);
 void usart_application_event_callback(UsartHandler *handler, uint8_t app_event);

@@ -3,16 +3,16 @@
 
 #include "stm32f103c8.h"
 
-#define USART_PARITY_ERROR_FLAG (1 << USRAT_PE)
-#define USART_FRAMING_ERROR_FLAG (1 << USRAT_FE)
-#define USART_NOISE_ERROR_FLAG (1 << USRAT_NE)
-#define USART_OVERRUN_ERROR_FLAG (1 << USRAT_ORE)
-#define USART_IDLE_FLAG (1 << USRAT_IDLE)
-#define USART_RXNE_FLAG (1 << USRAT_RXNE)
-#define USART_TC_FLAG (1 << USRAT_TC)
-#define USART_TXE_FLAG (1 << USRAT_TXE)
-#define USART_LBD_FLAG (1 << USRAT_LBD)
-#define USART_CTS_FLAG (1 << USRAT_CTS)
+#define USART_PARITY_ERROR_FLAG (1 << USART_PE)
+#define USART_FRAMING_ERROR_FLAG (1 << USART_FE)
+#define USART_NOISE_ERROR_FLAG (1 << USART_NE)
+#define USART_OVERRUN_ERROR_FLAG (1 << USART_ORE)
+#define USART_IDLE_FLAG (1 << USART_IDLE)
+#define USART_RXNE_FLAG (1 << USART_RXNE)
+#define USART_TC_FLAG (1 << USART_TC)
+#define USART_TXE_FLAG (1 << USART_TXE)
+#define USART_LBD_FLAG (1 << USART_LBD)
+#define USART_CTS_FLAG (1 << USART_CTS)
 
 
 #define USART_STD_BAUD_1200					1200
@@ -81,7 +81,7 @@ void usart_deinit(UsartRegDef *address);
 
 // Data Send and Receive
 void usart_tx(UsartRegDef *address,uint8_t *tx_buffer, uint32_t len);
-void usrat_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
+void usart_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
 uint8_t usart_tx_it(UsartHandler *handler,uint8_t *tx_buffer, uint32_t len);
 uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
 
