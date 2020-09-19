@@ -474,5 +474,7 @@ typedef enum {
 #include "stm32f103c8_gpio_driver.h"
 #include "stm32f103c8_spi_driver.h"
 #include "stm32f103c8_i2c_driver.h"
+#include "stm32f103c8_rcc_driver.h"
+#include "stm32f103c8_usart_driver.h"
 
 #endif /* INC_STM32F103C8_H_ */

@@ -28,9 +28,38 @@ void usart_peri_clock_ctrl(UsartRegDef *address, uint8_t en_or_di) {
 	}
 }
 
-// Init and De-init
-void usart_init(UsartHandler *handler);
-void usart_deinit(UsartRegDef *address);
+void usart_init(UsartHandler *handler) {
+	// mode
+	if (handler->settings.mode == USART_MODE_TX) {
+		handler->address->CR1 |= (1 << USART_TXEIE);
+		handler->address->CR1 |= (1 << USART_TCIE);
+	} else if (handler->settings.mode == USART_MODE_RX) {
+		handler->address->CR1 |= (1 << USART_RXNEIE);
+	} else {
+		handler->address->CR1 |= (1 << USART_TXEIE);
+		handler->address->CR1 |= (1 << USART_TCIE);
+		handler->address->CR1 |= (1 << USART_TCIE);
+	}
+	// parity
+	if (handler->settings.parity == USART_PARITY_DISABLE) {
+		handler->address->CR1 &= ~(1 << USART_PCE);
+	} else {
+		handler->address->CR1 |= (1 << USART_PCE);
+		if (handler->settings.parity == USART_PARITY_EN_EVEN) {
+			handler->address->CR1 &= ~(1 << USART_PS);
+		} else {
+			handler->address->CR1 |= (1 << USART_PS);
+		}
+	}
+	// word length
+	address->address->CR1 |= (handler->settings.word_length << USART_M);
+
+	// stop bits
+	handler->address->CR2 |= (handler->settings.stop_bits << USART_STOP);
+
+	// hw flow ctrl
+	handler->address->CR3 |= (handler->settings.flow_ctrl << USART_RTSE);
+}
 
 // Data Send and Receive
 void usart_tx(UsartRegDef *address, uint8_t *tx_buffer, uint32_t len);
@@ -59,7 +88,14 @@ void usart_irq_priority_config(uint8_t irq_number, NvicIrqPriority irq_priority)
 
 void usart_irq_handling(UsartHandler *handler);
 
-void usart_peripheral_control(UsartRegDef *address, uint8_t en_or_di);
+void usart_peripheral_control(UsartRegDef *address, uint8_t en_or_di) {
+	if (en_or_di == ENABLE) {
+		address->CR1 |= (1 << USART_UE);
+	} else {
+		address->CR1 &= ~(1 << USART_UE);
+	}
+}
+
 uint8_t usart_get_flag_status(UsartRegDef *address, uint32_t flag_name);
 void usart_clear_flag(UsartRegDef *address, uint16_t status_flag_name);
 void usart_application_event_callback(UsartHandler *handler, uint8_t app_event);
