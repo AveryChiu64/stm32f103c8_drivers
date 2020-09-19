@@ -29,17 +29,10 @@ void usart_peri_clock_ctrl(UsartRegDef *address, uint8_t en_or_di) {
 }
 
 void usart_init(UsartHandler *handler) {
+	usart_peri_clock_ctrl(handler->address, ENABLE);
 	// mode
-	if (handler->settings.mode == USART_MODE_TX) {
-		handler->address->CR1 |= (1 << USART_TXEIE);
-		handler->address->CR1 |= (1 << USART_TCIE);
-	} else if (handler->settings.mode == USART_MODE_RX) {
-		handler->address->CR1 |= (1 << USART_RXNEIE);
-	} else {
-		handler->address->CR1 |= (1 << USART_TXEIE);
-		handler->address->CR1 |= (1 << USART_TCIE);
-		handler->address->CR1 |= (1 << USART_TCIE);
-	}
+	handler->address->CR1 |= (handler->settings.mode << USART_RE);
+
 	// parity
 	if (handler->settings.parity == USART_PARITY_DISABLE) {
 		handler->address->CR1 &= ~(1 << USART_PCE);
@@ -62,7 +55,16 @@ void usart_init(UsartHandler *handler) {
 }
 
 // Data Send and Receive
-void usart_tx(UsartRegDef *address, uint8_t *tx_buffer, uint32_t len);
+void usart_tx(UsartRegDef *address, uint8_t *tx_buffer, uint32_t len) {
+	for (uint32_t i = 0; i < len; i++) {
+		// TXE Flag
+		while(!usart_get_flag_status(handler->address,FLAG));
+		handler->address->DR =
+		tx_buffer++;
+		// TC flag
+		while(!usart_get_flag_status(handler->address,FLAG));
+	}
+}
 void usrat_rx(UsartRegDef *address, uint8_t *rx_buffer, uint32_t len);
 uint8_t usart_tx_it(UsartHandler *handler, uint8_t *tx_buffer, uint32_t len);
 uint8_t usart_rx_it(UsartHandler *handler, uint8_t *rx_buffer, uint32_t len);
